@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Sativus AI</title>
+  <meta name="theme-color" content="#120f09">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* ── Doctor mode (Saffron / warm) ── */
+      --accent:        #F4C430;
+      --accent-dim:    rgba(244,196,48,0.12);
+      --accent-glow:   rgba(244,196,48,0.25);
+      --saffron:       #F4C430;
+      --saffron-dim:   rgba(244,196,48,0.12);
+      --saffron-glow:  rgba(244,196,48,0.25);
+      --purple:        #7A47FF;
+      --bg:            #120f09;
+      --bg2:           #1a1510;
+      --warm-card:     rgba(255,245,220,0.04);
+      --warm-card2:    rgba(255,245,220,0.07);
+      --border:        rgba(255,245,220,0.08);
+      --border-bright: rgba(255,245,220,0.15);
+      --text:          #f5edd8;
+      --text2:         rgba(245,237,216,0.65);
+      --text3:         rgba(245,237,216,0.32);
+      --green:         #52c97e;
+      --green-dim:     rgba(82,201,126,0.1);
+      --yellow:        #f0b429;
+      --yellow-dim:    rgba(240,180,41,0.1);
+      --red:           #f87171;
+      --red-dim:       rgba(248,113,113,0.1);
+      --glass-bg:      rgba(255,245,220,0.05);
+      --glass-blur:    24px;
+      --radius-sm:     16px;
+      --radius:        24px;
+      /* theme transition speed */
+      --theme-speed:   0.6s;
+    }
+
+    /* ── Explorer mode (Forest green) ── */
+    body.explorer-mode {
+      --accent:        #4ade80;
+      --accent-dim:    rgba(74,222,128,0.12);
+      --accent-glow:   rgba(74,222,128,0.22);
+      --bg:            #060e08;
+      --bg2:           #0b1510;
+      --warm-card:     rgba(200,255,210,0.04);
+      --warm-card2:    rgba(200,255,210,0.07);
+      --border:        rgba(200,255,210,0.08);
+      --border-bright: rgba(200,255,210,0.16);
+      --text:          #d4f0dc;
+      --text2:         rgba(212,240,220,0.65);
+      --text3:         rgba(212,240,220,0.32);
+      --glass-bg:      rgba(200,255,210,0.05);
+    }
+
+    /* ── Health: Sick (muted amber/orange) ── */
+    body.health-sick {
+      --accent:        #e8954a;
+      --accent-dim:    rgba(232,149,74,0.12);
+      --accent-glow:   rgba(232,149,74,0.22);
+      --bg:            #110c07;
+      --bg2:           #1a1108;
+      --warm-card:     rgba(255,220,180,0.04);
+      --warm-card2:    rgba(255,220,180,0.07);
+      --border:        rgba(255,200,150,0.08);
+      --border-bright: rgba(255,200,150,0.15);
+      --text:          #f0dcc0;
+      --text2:         rgba(240,220,190,0.65);
+      --text3:         rgba(240,220,190,0.32);
+      --glass-bg:      rgba(255,200,150,0.05);
+    }
+    body.health-sick::before {
+      background:
+        radial-gradient(ellipse 80% 50% at 15% -5%, rgba(232,149,74,0.09) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 105%, rgba(180,80,30,0.06) 0%, transparent 50%);
+    }
+
+    /* ── Health: Critical (deep muted red/grey) ── */
+    body.health-critical {
+      --accent:        #c0513a;
+      --accent-dim:    rgba(192,81,58,0.13);
+      --accent-glow:   rgba(192,81,58,0.22);
+      --bg:            #0f0807;
+      --bg2:           #180d0b;
+      --warm-card:     rgba(255,180,160,0.04);
+      --warm-card2:    rgba(255,180,160,0.06);
+      --border:        rgba(255,160,140,0.08);
+      --border-bright: rgba(255,160,140,0.14);
+      --text:          #eedbd6;
+      --text2:         rgba(238,218,210,0.62);
+      --text3:         rgba(238,218,210,0.30);
+      --glass-bg:      rgba(255,160,140,0.05);
+    }
+    body.health-critical::before {
+      background:
+        radial-gradient(ellipse 80% 50% at 15% -5%, rgba(192,81,58,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 105%, rgba(120,30,20,0.07) 0%, transparent 50%);
+    }
+
+    *, *::before, *::after {
+      margin:0; padding:0; box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+      -webkit-touch-callout:none;
+    }
+
+    html, body { height:100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: env(safe-area-inset-bottom);
+      transition: background var(--theme-speed) cubic-bezier(0.16,1,0.3,1),
+                  color var(--theme-speed) cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* Warm gradient mesh — doctor */
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:
+        radial-gradient(ellipse 80% 50% at 15% -5%, rgba(244,196,48,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 105%, rgba(122,71,255,0.05) 0%, transparent 50%);
+      transition: opacity var(--theme-speed) ease;
+    }
+    /* Explorer gradient mesh — forest */
+    body.explorer-mode::before {
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -5%, rgba(74,222,128,0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 85% 105%, rgba(34,197,94,0.06) 0%, transparent 50%);
+    }
+
+    /* Grain */
+    body::after {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
+    }
+
+    .app {
+      position:relative; z-index:1;
+      max-width:480px; margin:0 auto;
+      padding-bottom:40px;
+    }
+
+    /* Desktop — wider bento layout */
+    @media(min-width:768px) {
+      .app { max-width:960px; padding:0 32px 40px; }
+      header { padding-left:32px; padding-right:32px; }
+      .app-desktop { display:grid; grid-template-columns:1fr 1fr; gap:0 28px; align-items:start; padding-top:16px; }
+      .app-left  { position:sticky; top:80px; }
+      .app-right { padding-top:0; }
+      .bento-stats { padding:0 0 0; }
+      .camera-wrap { margin:14px 0 0; aspect-ratio:4/3; }
+      .result-card { margin:0 0 0; }
+      .journal-wrap { padding:20px 0 48px; }
+      .mode-toggle { margin:14px 0 0; }
+      .controls { padding:14px 0 0; }
+      .stat-num { font-size:30px; }
+    }
+
+    /* ── HEADER ── */
+    header {
+      position:sticky; top:0; z-index:100;
+      padding: max(20px,env(safe-area-inset-top)) 20px 14px;
+      background: rgba(18,15,9,0.8); transition: background var(--theme-speed) ease;
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border-bottom: 1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .logo-wrap { display:flex; align-items:center; gap:11px; }
+    .logo-mark {
+      width:38px; height:38px;
+      background: linear-gradient(135deg,#2a1f00,#5a3e00);
+      border-radius:11px;
+      border:1px solid rgba(244,196,48,0.3);
+      display:flex; align-items:center; justify-content:center;
+      font-size:19px;
+      box-shadow:0 0 20px var(--saffron-glow), inset 0 1px 0 rgba(255,255,255,0.1);
+      transition: background var(--theme-speed) ease, border-color var(--theme-speed) ease, box-shadow var(--theme-speed) ease;
+    }
+    body.explorer-mode .logo-mark {
+      background: linear-gradient(135deg,#062010,#0d3520);
+      border-color: rgba(74,222,128,0.3);
+      box-shadow: 0 0 20px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .logo-name {
+      font-family:'Cormorant Garamond',serif;
+      font-size:22px; font-weight:600; letter-spacing:0.5px;
+    }
+    .logo-tag { font-size:10px; color:var(--text3); letter-spacing:1.2px; text-transform:uppercase; margin-top:1px; }
+
+    /* ── BENTO STATS ── */
+    .bento-stats {
+      display:grid; grid-template-columns:1fr 1fr 1fr;
+      gap:8px; padding:16px 16px 0;
+    }
+    .stat-tile {
+      background:var(--warm-card); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:12px 10px; text-align:center;
+      transition:border-color 0.2s;
+    }
+    .stat-tile:hover { border-color:var(--border-bright); }
+    .stat-num {
+      font-family:'Cormorant Garamond',serif;
+      font-size:26px; font-weight:600; color:var(--accent); line-height:1;
+      transition: color var(--theme-speed) ease;
+    }
+    .stat-label { font-size:10px; color:var(--text3); letter-spacing:0.6px; text-transform:uppercase; margin-top:4px; }
+
+    /* ── MODE TOGGLE ── */
+    .mode-toggle {
+      display:flex; margin:14px 16px 0;
+      background:var(--warm-card); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:3px; gap:3px;
+    }
+    .mode-btn {
+      flex:1; padding:10px 8px; border:none; border-radius:9px;
+      background:transparent; color:var(--text3);
+      font-family:'Plus Jakarta Sans',sans-serif;
+      font-size:12px; font-weight:500; cursor:pointer;
+      transition:all 0.2s cubic-bezier(0.4,0,0.2,1); letter-spacing:0.3px;
+    }
+    .mode-btn.active {
+      background:var(--accent-dim); color:var(--accent);
+      border:1px solid rgba(255,255,255,0.1);
+      box-shadow:0 0 14px var(--accent-glow);
+      transition: background 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    /* ── CAMERA ── */
+    .camera-wrap {
+      margin:14px 16px 0; position:relative;
+      border-radius:var(--radius); overflow:hidden;
+      border:1px solid var(--border); background:var(--bg2);
+      aspect-ratio:4/3;
+      box-shadow:0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    #video { width:100%; height:100%; object-fit:cover; display:block; }
+
+    .cam-idle {
+      position:absolute; inset:0; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:14px; background:var(--bg2);
+    }
+    .cam-idle-ring {
+      width:64px; height:64px; border:1.5px solid var(--border-bright);
+      border-radius:50%; display:flex; align-items:center; justify-content:center;
+      font-size:26px; position:relative;
+    }
+    .cam-idle-ring::before {
+      content:''; position:absolute; inset:-8px;
+      border:1px solid var(--border); border-radius:50%;
+      animation:breathe 3s ease-in-out infinite;
+    }
+    @keyframes breathe { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.7;transform:scale(1.05)} }
+    .cam-idle p { font-size:12px; color:var(--text3); letter-spacing:0.5px; }
+
+    .scan-bar {
+      position:absolute; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,transparent 0%,var(--accent) 40%,rgba(255,255,255,0.6) 50%,var(--accent) 60%,transparent 100%);
+      box-shadow:0 0 12px var(--accent), 0 0 24px var(--accent-glow);
+      display:none; animation:scanDown 2.2s ease-in-out infinite;
+    }
+    .scanning .scan-bar { display:block; }
+    @keyframes scanDown { 0%{top:2%;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:98%;opacity:0} }
+
+    .corner {
+      position:absolute; width:18px; height:18px;
+      border-color:var(--accent); border-style:solid; transition:border-color var(--theme-speed) ease;
+      opacity:0; transition:opacity 0.3s;
+    }
+    .scanning .corner { opacity:0.7; }
+    .corner.tl{top:10px;left:10px;border-width:2px 0 0 2px;border-radius:4px 0 0 0}
+    .corner.tr{top:10px;right:10px;border-width:2px 2px 0 0;border-radius:0 4px 0 0}
+    .corner.bl{bottom:10px;left:10px;border-width:0 0 2px 2px;border-radius:0 0 0 4px}
+    .corner.br{bottom:10px;right:10px;border-width:0 2px 2px 0;border-radius:0 0 4px 0}
+
+    .status-pill {
+      position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
+      background:rgba(18,15,9,0.75); backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      border:1px solid rgba(255,245,220,0.12); border-radius:20px;
+      padding:5px 14px; font-size:11px; color:var(--text2);
+      white-space:nowrap; letter-spacing:0.3px; transition:all 0.25s;
+      box-shadow:0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    /* ── CONTROLS ── */
+    .controls { display:flex; gap:10px; padding:14px 16px 0; }
+
+    .btn {
+      flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+      padding:16px 8px; border:none; border-radius:16px;
+      font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:600;
+      cursor:pointer; transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
+      position:relative; overflow:hidden;
+      box-shadow:0 4px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .btn:active { transform:scale(0.97); box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+    .btn:disabled { opacity:0.28; pointer-events:none; }
+    .btn-icon { font-size:15px; }
+
+    .btn-start {
+      background:var(--warm-card2); color:var(--text2);
+      border:1px solid var(--border-bright);
+    }
+    .btn-start:hover { background:rgba(255,245,220,0.1); color:var(--text); }
+
+    .btn-scan {
+      background: var(--accent);
+      color:#0a1a0a; font-weight:700; letter-spacing:0.3px;
+      box-shadow:0 8px 24px var(--accent-glow), inset 0 1px 1px rgba(255,255,255,0.4);
+      transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .btn-scan:hover { box-shadow:0 12px 32px var(--accent-glow), inset 0 1px 1px rgba(255,255,255,0.5); transform: translateY(-2px); }
+
+    .btn-ask {
+      background:var(--warm-card2); color:var(--text2);
+      border:1px solid var(--border-bright);
+    }
+    .btn-ask.listening {
+      background:rgba(244,196,48,0.1); border-color:rgba(244,196,48,0.4);
+      color:var(--saffron); animation:pulseGlow 1.5s ease-in-out infinite;
+    }
+    .btn-ask.speaking {
+      background:rgba(244,196,48,0.1); border-color:var(--border-bright);
+      color:var(--text); box-shadow:0 0 12px rgba(244,196,48,0.15);
+      animation:pulseGlow 2s ease-in-out infinite;
+    }
+    @keyframes pulseGlow {
+      0%,100%{box-shadow:0 2px 0 rgba(0,0,0,0.4),0 0 0 0 var(--saffron-glow)}
+      50%{box-shadow:0 2px 0 rgba(0,0,0,0.4),0 0 0 6px rgba(244,196,48,0)}
+    }
+
+    .btn-mute {
+      flex:0 0 50px; background:var(--warm-card2); color:var(--text3);
+      border:1px solid var(--border);
+    }
+    .btn-mute.muted { background:var(--red-dim); border-color:rgba(248,113,113,0.3); color:var(--red); }
+
+    /* ── UPLOAD SECTION ── */
+    .upload-section {
+      margin: 10px 16px 0;
+      position: relative;
+    }
+
+    .upload-toggle {
+      width: 100%;
+      padding: 10px 16px;
+      background: var(--warm-card);
+      border: 1px dashed var(--border-bright);
+      border-radius: 16px;
+      color: var(--text3);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .upload-toggle:hover {
+      background: var(--warm-card2);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .upload-toggle.has-image {
+      border-style: solid;
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+
+
+    @media(min-width:768px) {
+      .upload-section { margin: 10px 0 0; }
+    }
+
+    /* ── RESULT CARD ── */
+    .result-card {
+      margin:14px 16px 0; border-radius:var(--radius); overflow:hidden;
+      border:1px solid var(--border); background:var(--glass-bg);
+      backdrop-filter:blur(var(--glass-blur));
+      -webkit-backdrop-filter:blur(var(--glass-blur));
+      transition:border-color 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.4s cubic-bezier(0.16,1,0.3,1);
+      box-shadow:0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .result-card.good   { border-color:rgba(82,201,126,0.25); }
+    .result-card.sick   { border-color:rgba(240,180,41,0.3); }
+    .result-card.danger { border-color:rgba(248,113,113,0.3); }
+
+    /* Skeleton */
+    .skel-wrap { padding:20px; }
+    .skel {
+      background:linear-gradient(90deg,rgba(255,245,220,0.04) 25%,rgba(255,245,220,0.09) 50%,rgba(255,245,220,0.04) 75%);
+      background-size:200% 100%; border-radius:6px;
+      animation:skelWave 1.5s ease-in-out infinite;
+    }
+    @keyframes skelWave { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .skel-h { height:26px; width:58%; margin-bottom:8px; border-radius:8px; }
+    .skel-s { height:13px; width:38%; margin-bottom:18px; }
+    .skel-l { height:12px; width:100%; margin-bottom:7px; }
+    .skel-l.sm { width:72%; }
+
+    /* Result inner */
+    .result-inner {
+      padding:20px;
+      animation:fadeUp 0.45s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+    .result-empty {
+      padding:28px 20px; display:flex; align-items:center;
+      gap:12px; color:var(--text3); font-size:13px;
+    }
+    .empty-icon {
+      width:36px; height:36px; border:1px solid var(--border);
+      border-radius:10px; display:flex; align-items:center; justify-content:center;
+      font-size:16px; flex-shrink:0;
+    }
+
+    .result-top {
+      display:flex; align-items:flex-start;
+      justify-content:space-between; gap:10px; margin-bottom:12px;
+    }
+    .result-name {
+      font-family:'Cormorant Garamond',serif;
+      font-size:26px; font-weight:600; line-height:1.15;
+      letter-spacing:-0.3px;
+    }
+    .result-sci {
+      font-family:'Cormorant Garamond',serif;
+      font-style:italic; font-size:13px; color:var(--text3); margin-top:3px;
+    }
+
+    .badge {
+      display:inline-flex; align-items:center; gap:5px;
+      padding:5px 10px; border-radius:20px; font-size:11px;
+      font-weight:600; white-space:nowrap; flex-shrink:0;
+      letter-spacing:0.3px; border:1px solid transparent;
+    }
+    .badge.good   { background:var(--green-dim);  color:var(--green);  border-color:rgba(82,201,126,0.2); }
+    .badge.sick   { background:var(--yellow-dim); color:var(--yellow); border-color:rgba(240,180,41,0.2); }
+    .badge.danger { background:var(--red-dim);    color:var(--red);    border-color:rgba(248,113,113,0.2); }
+    .badge-dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+
+    /* Story + streaming cursor */
+    .result-story { font-size:13.5px; line-height:1.72; color:var(--text2); margin-bottom:14px; }
+    .cursor-blink {
+      display:inline-block; width:2px; height:14px;
+      background:var(--accent); margin-left:2px; vertical-align:text-bottom; transition:background var(--theme-speed) ease;
+      animation:blink 500ms ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .diag-line {
+      display:flex; align-items:flex-start; gap:8px;
+      font-size:12.5px; color:var(--yellow); margin-bottom:12px;
+      padding:10px 12px; background:var(--yellow-dim);
+      border-radius:var(--radius-sm); border:1px solid rgba(240,180,41,0.15);
+      line-height:1.5;
+    }
+
+    .treat-section { border-top:1px solid var(--border); padding-top:14px; margin-top:4px; }
+    .treat-header {
+      font-size:10px; font-weight:600; letter-spacing:1px;
+      color:var(--text3); text-transform:uppercase; margin-bottom:12px;
+    }
+    .treat-step {
+      display:flex; align-items:flex-start; gap:12px;
+      margin-bottom:10px; font-size:13px; color:var(--text2); line-height:1.55;
+    }
+    .step-num {
+      min-width:22px; height:22px;
+      background:var(--accent-dim); border:1px solid rgba(255,255,255,0.08);
+      border-radius:6px; display:flex; align-items:center; justify-content:center;
+      font-size:11px; font-weight:700; color:var(--accent); flex-shrink:0; margin-top:1px;
+      transition: background var(--theme-speed) ease, color var(--theme-speed) ease;
+    }
+
+    .meta-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+    .meta-chip {
+      display:flex; align-items:center; gap:4px;
+      padding:4px 10px; background:var(--warm-card);
+      border:1px solid var(--border); border-radius:20px;
+      font-size:11px; color:var(--text3);
+    }
+    .chip-gold { color:var(--saffron) !important; border-color:rgba(244,196,48,0.2) !important; }
+
+    /* ── JOURNAL ── */
+    .journal-wrap { padding:20px 16px 48px; }
+    .journal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .journal-title { font-size:11px; font-weight:600; color:var(--text3); letter-spacing:1px; text-transform:uppercase; }
+    .journal-count {
+      background:var(--accent-dim); border:1px solid rgba(255,255,255,0.1);
+      color:var(--accent); padding:3px 10px; border-radius:20px;
+      font-size:11px; font-weight:600;
+      transition: background var(--theme-speed) ease, color var(--theme-speed) ease;
+    }
+
+    .j-card {
+      background:var(--glass-bg); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:14px 16px; margin-bottom:10px;
+      display:flex; align-items:center; gap:12px; cursor:pointer;
+      transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
+      box-shadow:0 4px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      min-height:62px; user-select:none; -webkit-user-select:none;
+    }
+    .j-card:hover  { border-color:var(--border-bright); background:var(--warm-card2); transform: translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,0.15); }
+    .j-card:active { transform:scale(0.98) translateY(1px); box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    .j-card.sick    { border-left:2.5px solid var(--yellow); }
+    .j-card.danger  { border-left:2.5px solid var(--red); }
+    .j-card.invasive{ border-left:2.5px solid #fb923c; }
+
+    .j-emoji {
+      width:40px; height:40px; background:var(--warm-card2);
+      border-radius:10px; border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      font-size:18px; flex-shrink:0;
+    }
+    .j-info { flex:1; min-width:0; }
+    .j-name { font-size:14px; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .j-sub  { font-size:11px; color:var(--text3); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .j-water { color:var(--accent); font-weight:600; transition:color var(--theme-speed) ease; }
+    .j-status { font-size:11px; font-weight:600; flex-shrink:0; }
+    .j-status.good   { color:var(--green); }
+    .j-status.sick   { color:var(--yellow); }
+    .j-status.danger { color:var(--red); }
+
+    .journal-empty { text-align:center; padding:44px 20px; color:var(--text3); }
+    .journal-empty span { font-size:40px; display:block; margin-bottom:10px; opacity:0.3; }
+    .journal-empty p { font-size:13px; }
+
+    .credit { text-align:right; padding:0 20px 8px; font-size:10px; color:rgba(244,196,48,0.14); letter-spacing:0.3px; }
+
+    /* Speak button */
+    .speak-btn {
+      width: 30px; height: 30px;
+      background: var(--warm-card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.3);
+    }
+    .speak-btn:active { transform: translateY(1px); box-shadow: none; }
+    .speak-btn:hover { border-color: var(--border-bright); background: rgba(255,245,220,0.1); }
+
+    /* Live transcript overlay */
+    .listen-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(10,8,5,0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 20px; padding: 32px;
+    }
+    .listen-overlay.active { display: flex; }
+    .listen-pulse {
+      width: 72px; height: 72px;
+      background: var(--accent-dim);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 0 0 0 var(--accent-glow);
+      animation: listenPulse 1.4s ease-in-out infinite;
+    }
+    @keyframes listenPulse {
+      0%,100% { box-shadow: 0 0 0 0 var(--accent-glow); transform: scale(1); }
+      50%      { box-shadow: 0 0 0 18px transparent;     transform: scale(1.06); }
+    }
+    .listen-transcript {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 400;
+      color: var(--text); text-align: center;
+      min-height: 60px; max-width: 340px;
+      line-height: 1.5; letter-spacing: 0.2px;
+      transition: all 0.15s;
+    }
+    .listen-transcript .interim { color: var(--text3); }
+    .listen-hint { font-size: 11px; color: var(--text3); letter-spacing: 0.5px; }
+    .listen-cancel {
+      padding: 12px 32px;
+      background: var(--warm-card2);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-sm);
+      color: var(--text2);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .listen-cancel:hover { background: var(--red-dim); border-color: rgba(248,113,113,0.3); color: var(--red); }
+
+    /* Thinking panel */
+    .thinking-panel {
+      display: none;
+      position: fixed;
+      top: 0; right: 0;
+      width: min(320px, 90vw);
+      height: 100vh;
+      background: rgba(10,8,5,0.96);
+      backdrop-filter: blur(20px);
+      border-left: 1px solid var(--border);
+      z-index: 998;
+      flex-direction: column;
+      padding: 24px 20px;
+      gap: 12px;
+      overflow-y: auto;
+    }
+    .thinking-panel.active { display: flex; }
+    .thinking-header {
+      font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--text3); display: flex; justify-content: space-between; align-items: center;
+    }
+    .thinking-close {
+      background: none; border: none; color: var(--text3);
+      font-size: 16px; cursor: pointer; padding: 4px;
+    }
+    .thinking-close:hover { color: var(--text); }
+    .thinking-content {
+      font-size: 12px; line-height: 1.7; color: var(--text2);
+      font-family: 'Plus Jakarta Sans', monospace;
+      white-space: pre-wrap;
+    }
+    .thinking-label {
+      font-size: 9px; letter-spacing: 0.8px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 6px;
+    }
+
+    canvas { display:none; }
+
+    @media(max-width:400px) {
+      .camera-wrap { aspect-ratio:3/4; }
+      .result-name { font-size:22px; }
+      .btn { font-size:12px; padding:14px 6px; }
+      .bento-stats { padding:12px 12px 0; gap:6px; }
+      .controls, .mode-toggle, .result-card, .journal-wrap { margin-left:12px; margin-right:12px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="logo-wrap">
+      <div class="logo-mark">🌿</div>
+      <div>
+        <div class="logo-name">Sativus</div>
+        <div class="logo-tag">Plant Doctor · Nature Explorer</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-desktop">
+  <div class="app-left">
+  <div class="bento-stats">
+    <div class="stat-tile"><div class="stat-num" id="statScans">0</div><div class="stat-label">Scanned</div></div>
+    <div class="stat-tile"><div class="stat-num" id="statSick">0</div><div class="stat-label">Treated</div></div>
+    <div class="stat-tile"><div class="stat-num" id="statSpecies">0</div><div class="stat-label">Species</div></div>
+  </div>
+
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="doctorBtn" onclick="switchMode('doctor')">🏥 Plant Doctor</button>
+    <button class="mode-btn" id="explorerBtn" onclick="switchMode('explorer')">🔭 Nature Explorer</button>
+  </div>
+
+  <div class="camera-wrap" id="cameraWrap"
+       ondragover="handleDragOver(event)"
+       ondragleave="handleDragLeave(event)"
+       ondrop="handleDrop(event)">
+    <video id="video" autoplay playsinline muted></video>
+    <img id="camUploadImg" src="" alt="uploaded"
+         style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;" />
+    <div class="cam-idle" id="camIdle">
+      <div class="cam-idle-ring">📷</div>
+      <p>Tap Start to begin</p>
+    </div>
+    <div class="scan-bar"></div>
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
+    <div class="status-pill" id="statusPill">Initialising</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-start" id="startBtn" onclick="startCamera()"><span class="btn-icon">📷</span> Start</button>
+    <button class="btn btn-mute" id="locBtn" onclick="requestLocation()" title="Enable location"><span id="locIcon">📍</span></button>
+    <button class="btn btn-scan" onclick="handleAnalyse()" id="scanBtn" disabled><span class="btn-icon">✦</span> Analyse</button>
+    <button class="btn btn-ask" onclick="handleAsk()" id="askBtn" disabled>
+      <span class="btn-icon" id="askIcon">🎤</span><span id="askLabel">Ask</span>
+    </button>
+    <button class="btn btn-mute" onclick="toggleMute()" id="muteBtn"><span id="muteIcon">🔊</span></button>
+  </div>
+
+  <div class="upload-section">
+    <button class="upload-toggle" id="uploadToggle"
+            onclick="document.getElementById('fileInput').click()">
+      <span>🖼️</span> <span id="uploadToggleLabel">Upload Image</span>
+    </button>
+    <input type="file" id="fileInput" accept="image/*" style="display:none"
+           onchange="handleFileSelect(event)">
+  </div>
+
+  </div><!-- /app-left -->
+  <div class="app-right">
+  <div class="result-card" id="resultCard">
+    <div class="result-empty"><div class="empty-icon">🌱</div><span>Point your camera at any plant and tap Analyse</span></div>
+  </div>
+
+  <div class="journal-wrap">
+    <div class="journal-header">
+      <span class="journal-title">Field Journal</span>
+      <span class="journal-count" id="journalCount">0 entries</span>
+    </div>
+    <div id="journalList"></div>
+  </div>
+
+  </div><!-- /app-right -->
+  </div><!-- /app-desktop -->
+  <div class="credit">made by Tazwar Ahnaf Enan</div>
+
+</div>
+<canvas id="canvas"></canvas>
+
+<!-- LISTEN OVERLAY -->
+<div class="listen-overlay" id="listenOverlay">
+  <div class="listen-pulse">🎤</div>
+  <div class="listen-transcript" id="liveTranscript">
+    <span class="interim">Listening…</span>
+  </div>
+  <button class="listen-cancel" onclick="cancelListening()">✕ Cancel</button>
+</div>
+
+<script>
+  const API_URL = `http://${window.location.hostname || 'localhost'}:8000`;
+  let stream = null, userLocation = null, currentMode = 'doctor';
+  let journal = JSON.parse(localStorage.getItem('sativus_journal') || '[]');
+  let isMuted = false, isListening = false, recognition = null;
+  let selectedPlant = journal[0] || null;
+  let cachedVoice = null;
+
+  // Preload and cache best voice immediately
+  function loadVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices.length) return;
+    cachedVoice =
+      voices.find(v => v.name === 'Samantha') ||
+      voices.find(v => v.name === 'Karen') ||
+      voices.find(v => v.name === 'Moira') ||
+      voices.find(v => v.name.includes('Google UK English Female')) ||
+      voices.find(v => v.name.includes('Microsoft Aria')) ||
+      voices.find(v => v.name.includes('Microsoft Zira')) ||
+      voices.find(v => v.localService && v.lang === 'en-US') ||
+      voices.find(v => v.lang === 'en-GB') ||
+      voices.find(v => v.lang.startsWith('en') && v.localService) ||
+      voices.find(v => v.lang.startsWith('en'));
+  }
+  window.speechSynthesis.onvoiceschanged = loadVoice;
+  loadVoice(); // try immediately too
+
+  // Location — only read from cache, never auto-prompt
+  const _cachedLoc = localStorage.getItem('sativus_location');
+  if (_cachedLoc) { try { userLocation = JSON.parse(_cachedLoc); } catch(e) {} }
+  // Location is fetched lazily inside saveToJournal if user has already granted it
+
+  function requestLocation() {
+    if (!navigator.geolocation) { setStatus('Location not supported'); return; }
+    // Hide immediately on tap, exactly like the Start button
+    const btn = document.getElementById('locBtn');
+    btn.style.transition = 'opacity 0.3s, transform 0.3s';
+    btn.style.opacity = '0';
+    btn.style.transform = 'scale(0.9)';
+    setTimeout(() => { btn.style.display = 'none'; }, 320);
+    setStatus('Getting location…');
+    navigator.geolocation.getCurrentPosition(
+      p => {
+        userLocation = { lat: p.coords.latitude, lng: p.coords.longitude };
+        localStorage.setItem('sativus_location', JSON.stringify(userLocation));
+        setStatus('Location saved ✦');
+      },
+      () => {
+        // Show it again if denied
+        btn.style.display = 'flex';
+        btn.style.opacity = '1';
+        btn.style.transform = 'scale(1)';
+        setStatus('Location denied — tap 📍 to retry');
+      }
+    );
+  }
+
+  function setHealthTheme(health_status) {
+    const b = document.body;
+    b.classList.remove('health-sick', 'health-critical');
+    if (health_status === 'Sick')     b.classList.add('health-sick');
+    if (health_status === 'Critical') b.classList.add('health-critical');
+  }
+
+  function updateStats() {
+    document.getElementById('statScans').textContent   = journal.length;
+    document.getElementById('statSick').textContent    = journal.filter(e => e.health_status === 'Sick' || e.health_status === 'Critical').length;
+    const sp = new Set(journal.map(e => e.scientific_name).filter(Boolean));
+    document.getElementById('statSpecies').textContent = sp.size;
+  }
+
+  function switchMode(m) {
+    if (currentMode === m) return;
+    fadeOutSpeech();
+    currentMode = m;
+    document.getElementById('doctorBtn').classList.toggle('active', m === 'doctor');
+    document.getElementById('explorerBtn').classList.toggle('active', m === 'explorer');
+
+    // Smooth theme transition
+    document.body.classList.toggle('explorer-mode', m === 'explorer');
+
+    // Flash the camera overlay for a split second to signal mode change
+    const wrap = document.getElementById('cameraWrap');
+    wrap.style.opacity = '0.6';
+    setTimeout(() => { wrap.style.transition = 'opacity 0.4s ease'; wrap.style.opacity = '1'; }, 50);
+    setTimeout(() => { wrap.style.transition = ''; }, 500);
+
+    setStatus(m === 'doctor' ? '🏥 Doctor mode' : '🔭 Explorer mode');
+
+    // Clear result card with mode-appropriate empty state
+    document.getElementById('resultCard').className = 'result-card';
+    document.getElementById('resultCard').innerHTML = m === 'explorer'
+      ? `<div class="result-empty"><div class="empty-icon">🔭</div><span>Point at any plant, bird, insect or fungi and tap Analyse</span></div>`
+      : `<div class="result-empty"><div class="empty-icon">🌱</div><span>Point your camera at any plant and tap Analyse</span></div>`;
+  }
+
+  function setStatus(msg) { document.getElementById('statusPill').textContent = msg; }
+
+  async function startCamera() {
+    setHealthTheme(''); // reset theme on new session
+    const startBtn = document.getElementById('startBtn');
+    // If upload is showing, clear it first then start camera
+    if (uploadedImageBase64) clearUpload(false);
+    if (stream) { setStatus('Camera already running ✦'); return; }
+    if (startBtn) { startBtn.disabled = true; startBtn.style.opacity = '0.4'; }
+    setStatus('Requesting camera…');
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 } }, audio: false
+      });
+      document.getElementById('video').srcObject = stream;
+      document.getElementById('video').style.display = 'block';
+      document.getElementById('camIdle').style.display = 'none';
+      document.getElementById('scanBtn').disabled = false;
+      document.getElementById('askBtn').disabled  = false;
+      // Hide Start button — camera is live
+      if (startBtn) {
+        startBtn.style.transition = 'opacity 0.3s, transform 0.3s';
+        startBtn.style.opacity = '0'; startBtn.style.transform = 'scale(0.9)';
+        setTimeout(() => { startBtn.style.display = 'none'; }, 320);
+      }
+      setStatus('Ready ✦');
+    } catch(e) {
+      if (startBtn) { startBtn.disabled = false; startBtn.style.opacity = '1'; }
+      setStatus('Camera blocked — allow access');
+      document.getElementById('camIdle').querySelector('p').textContent = 'Tap Start and allow camera';
+    }
+  }
+
+  function captureFrame() {
+    const v = document.getElementById('video'), c = document.getElementById('canvas');
+    c.width = v.videoWidth || 1280; c.height = v.videoHeight || 960;
+    c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.92);
+  }
+
+  // Unified analyse — uses uploaded image if present, otherwise live camera
+  async function handleAnalyse() {
+    if (uploadedImageBase64) { await scanUpload(); return; }
+    if (!stream) { alert('Start camera or upload an image first!'); return; }
+    fadeOutSpeech();
+    setStatus('Capturing…');
+    await new Promise(r => setTimeout(r, 600));
+    const img = captureFrame();
+    document.getElementById('cameraWrap').classList.add('scanning');
+    document.getElementById('scanBtn').disabled = true;
+    setStatus('Sending to AI…');
+    let dots = 0;
+    const statusInterval = setInterval(() => {
+      const msgs = ['Sending to AI…', 'Analysing leaves…', 'Checking database…', 'Almost done…'];
+      dots = (dots + 1) % msgs.length; setStatus(msgs[dots]);
+    }, 2500);
+    document.getElementById('resultCard').className = 'result-card';
+    document.getElementById('resultCard').innerHTML = `
+      <div class="skel-wrap">
+        <div class="skel skel-h"></div><div class="skel skel-s"></div>
+        <div class="skel skel-l"></div><div class="skel skel-l"></div><div class="skel skel-l sm"></div>
+      </div>`;
+    try {
+      const res = await fetch(`${API_URL}/analyze`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ image:img, mode:currentMode, location:userLocation })
+      });
+      await displayResult(await res.json());
+    } catch(e) {
+      document.getElementById('resultCard').innerHTML = `
+        <div class="result-empty"><div class="empty-icon">⚠️</div><span>Backend offline. Run uvicorn main:app --reload</span></div>`;
+      setStatus('Connection error');
+    } finally {
+      clearInterval(statusInterval);
+      document.getElementById('cameraWrap').classList.remove('scanning');
+      document.getElementById('scanBtn').disabled = false;
+    }
+  }
+
+  async function scanFrame() { await handleAnalyse(); }
+
+  async function displayResult(data) {
+    const card = document.getElementById('resultCard');
+    // Also treat "Unknown Plant" / "Unknown" as scan failed
+    const isUnknown = !data.found ||
+      (data.common_name || '').toLowerCase().includes('unknown') ||
+      (data.common_name || '').trim() === '';
+
+    if (data.error && (data.error.includes("429") || data.error.includes("RESOURCE_EXHAUSTED") || data.error.includes("quota"))) {
+      card.className = 'result-card danger';
+      card.innerHTML = `
+        <div class="result-inner">
+          <div style="text-align:center;padding:16px 0 8px">
+            <div style="font-size:36px;margin-bottom:12px;opacity:0.6">⚠️</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text);margin-bottom:8px">API Quota Exceeded</div>
+            <div style="font-size:13px;color:var(--text3);line-height:1.6;max-width:260px;margin:0 auto">
+              Your Gemini API limits have been exhausted. Please check your billing dashboard on Google AI Studio.
+            </div>
+          </div>
+        </div>`;
+      setStatus('API Quota Exceeded');
+      document.getElementById('scanBtn').disabled = false;
+      return;
+    }
+
+    if (isUnknown) {
+      card.className = 'result-card';
+      card.innerHTML = `
+        <div class="result-inner">
+          <div style="text-align:center;padding:16px 0 8px">
+            <div style="font-size:36px;margin-bottom:12px;opacity:0.6">🔍</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text);margin-bottom:8px">Scan Failed</div>
+            <div style="font-size:13px;color:var(--text3);line-height:1.6;max-width:260px;margin:0 auto">
+              No plant detected. Try moving closer, improving lighting, or pointing directly at leaves.
+            </div>
+            <div style="display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap">
+              <span class="meta-chip">💡 Better lighting</span>
+              <span class="meta-chip">🔍 Move closer</span>
+              <span class="meta-chip">🌿 Point at leaves</span>
+            </div>
+          </div>
+        </div>`;
+      setStatus('Scan failed — try again');
+      document.getElementById('scanBtn').disabled = false;
+      return; // ← NOT saved to journal
+    }
+
+    const h = data.health_status || '', c = data.conservation_status || '';
+    const st = h || c || 'Healthy';
+    const sc = h==='Critical'||c==='Endangered'?'danger': h==='Sick'||c==='Invasive'?'sick':'good';
+    if (currentMode === 'doctor') setHealthTheme(h);
+
+    let treatHTML = '';
+    if (data.treatment_steps?.length) {
+      treatHTML = `<div class="treat-section"><div class="treat-header">Treatment Plan</div>
+        ${data.treatment_steps.map((s,i)=>`<div class="treat-step"><div class="step-num">${i+1}</div><span>${s}</span></div>`).join('')}
+      </div>`;
+    }
+
+    const metas = [];
+    if (data.global_observations && data.global_observations!=='0') metas.push(`🌍 ${data.global_observations}`);
+    if (data.watering_schedule) metas.push(`💧 ${data.watering_schedule}`);
+    if (userLocation) metas.push(`📍 ${userLocation.lat.toFixed(3)}, ${userLocation.lng.toFixed(3)}`);
+    const metaHTML = metas.length ? `<div class="meta-row">${metas.map(m=>`<span class="meta-chip">${m}</span>`).join('')}</div>` : '';
+
+    card.className = `result-card ${sc}`;
+    card.innerHTML = `
+      <div class="result-inner">
+        <div class="result-top">
+          <div><div class="result-name">${data.common_name}</div><div class="result-sci">${data.scientific_name}</div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0">
+            <div class="badge ${sc}"><span class="badge-dot"></span>${st}</div>
+            <button class="speak-btn" onclick="speakResult(document.querySelector('.result-story').textContent)" title="Speak">🔊</button>
+          </div>
+        </div>
+        <p class="result-story" id="storyText"></p>
+        ${data.diagnosis?`<div class="diag-line"><span>◈</span><span>${data.diagnosis}</span></div>`:''}
+        ${treatHTML}${metaHTML}
+      </div>`;
+
+    await streamText('storyText', data.story);
+    setStatus(`✦ ${data.common_name}`);
+    // speak only via button
+    await saveToJournal(data);
+  }
+
+  async function streamText(id, text) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '<span class="cursor-blink"></span>';
+    for (let i = 0; i < text.length; i++) {
+      el.innerHTML = text.slice(0, i+1) + '<span class="cursor-blink"></span>';
+      await new Promise(r => setTimeout(r, 11));
+    }
+    el.textContent = text;
+  }
+
+  function cleanForSpeech(text) {
+    return text
+      .replace(/https?:\/\/(www\.)?([a-zA-Z0-9.-]+\.[a-z]{2,})(\/[^\s]*)?/g, (_, w, d) => d + '. ')
+      .replace(/\([^)]{0,80}\)/g, '')
+      .replace(/\[[^\]]{0,80}\]/g, '')
+      .replace(/[*_`~#>|\\^{}]/g, '')
+      .replace(/[^\x00-\x7F]/g, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  }
+
+  function speakResult(text) {
+    if (!window.speechSynthesis || isMuted) return;
+    window.speechSynthesis.cancel();
+    if (!cachedVoice) loadVoice();
+    const cleaned = cleanForSpeech(text);
+    if (!cleaned) return;
+    const u = new SpeechSynthesisUtterance(cleaned);
+    if (cachedVoice) u.voice = cachedVoice;
+    u.rate = 0.88; u.pitch = 1.0; u.volume = 1.0;
+    u.onstart = () => {
+      setStatus('Speaking...');
+      const askBtn = document.getElementById('askBtn');
+      askBtn.classList.add('speaking');
+      document.getElementById('askIcon').textContent = '⏹';
+      document.getElementById('askLabel').textContent = 'Interrupt';
+      
+      // Tap the mic button while speaking = barge-in
+      askBtn.onclick = () => {
+        window.speechSynthesis.cancel();
+        if (liveWs && liveWs.readyState === WebSocket.OPEN) {
+          liveWs.send(JSON.stringify({ type: 'barge_in' }));
+        } else {
+          handleAsk();
+        }
+        resetAskBtnUI();
+      };
+    };
+    u.onend = () => {
+      setStatus('Done');
+      resetAskBtnUI();
+    };
+    u.onerror = () => {};
+    window.speechSynthesis.speak(u);
+  }
+
+  function resetAskBtnUI() {
+    const askBtn = document.getElementById('askBtn');
+    if (askBtn.classList.contains('speaking')) {
+      askBtn.onclick = handleAsk;
+      askBtn.classList.remove('speaking');
+      document.getElementById('askIcon').textContent = '🎤';
+      document.getElementById('askLabel').textContent = 'Ask';
+    }
+  }
+
+  // Smooth fade out speech
+  function fadeOutSpeech(cb) {
+    if (!window.speechSynthesis.speaking) { if(cb) cb(); return; }
+    let vol = 1.0;
+    const step = () => {
+      vol -= 0.15;
+      if (vol <= 0) {
+        window.speechSynthesis.cancel();
+        resetAskBtnUI();
+        if (cb) cb();
+        return;
+      }
+      // Can't set volume mid-utterance in all browsers, so just cancel after short delay
+      setTimeout(step, 40);
+    };
+    step();
+    // Fallback hard cancel after 200ms
+    setTimeout(() => { window.speechSynthesis.cancel(); resetAskBtnUI(); if(cb) cb(); }, 220);
+  }
+
+  function toggleMute() {
+    isMuted = !isMuted;
+    if (isMuted) fadeOutSpeech();
+    document.getElementById('muteBtn').classList.toggle('muted', isMuted);
+    document.getElementById('muteIcon').textContent = isMuted ? '🔇' : '🔊';
+    setStatus(isMuted ? '🔇 Muted' : '🔊 Sound on');
+  }
+
+  // ══════════════════════════════════════════
+  // GEMINI LIVE VOICE — WebSocket bidi streaming
+  // ══════════════════════════════════════════
+  let liveWs         = null;
+  let liveMicCtx     = null;  // 16kHz for MIC input
+  let livePlayCtx    = null;  // 24kHz for GEMINI audio output
+  let liveMicStream  = null;
+  let liveProcessor  = null;
+  let liveAccText    = '';
+  let liveAudioQueue = [];    // queued AudioBuffers to play back-to-back
+  let liveIsPlaying  = false;
+  let livePaused     = false; // barge-in flag
+
+  const WS_URL = `ws://${location.hostname || 'localhost'}:8000/ws/live`;
+  const GEMINI_SAMPLE_RATE = 24000; // Gemini Live always returns 24kHz PCM
+
+  // Decode raw Int16 PCM bytes from Gemini into an AudioBuffer and queue it
+  function enqueueAudio(arrayBuffer) {
+    if (livePaused || !livePlayCtx) return;
+    const i16 = new Int16Array(arrayBuffer);
+    const f32 = new Float32Array(i16.length);
+    for (let i = 0; i < i16.length; i++) f32[i] = i16[i] / 32768.0;
+    const buf = livePlayCtx.createBuffer(1, f32.length, GEMINI_SAMPLE_RATE);
+    buf.copyToChannel(f32, 0);
+    liveAudioQueue.push(buf);
+    if (!liveIsPlaying) playNextInQueue();
+  }
+
+  function playNextInQueue() {
+    if (livePaused || !livePlayCtx || liveAudioQueue.length === 0) {
+      liveIsPlaying = false;
+      return;
+    }
+    liveIsPlaying = true;
+    const buf = liveAudioQueue.shift();
+    const src = livePlayCtx.createBufferSource();
+    src.buffer = buf;
+    src.connect(livePlayCtx.destination);
+    src.onended = playNextInQueue;
+    src.start();
+  }
+
+  function stopAudioQueue() {
+    livePaused = true;
+    liveAudioQueue = [];
+    liveIsPlaying  = false;
+    // Close + recreate the playback context to immediately cut audio
+    if (livePlayCtx) {
+      try { livePlayCtx.close(); } catch(e) {}
+      livePlayCtx = new AudioContext({ sampleRate: GEMINI_SAMPLE_RATE });
+    }
+    livePaused = false;
+  }
+
+  function handleAsk() {
+    if (liveWs && liveWs.readyState === WebSocket.OPEN) {
+      stopLiveSession();
+    } else {
+      startLiveSession();
+    }
+  }
+
+  function startLiveSession() {
+    const plant = selectedPlant || journal[0];
+    if (!plant) {
+      setStatus('Scan a plant first!');
+      return;
+    }
+
+    fadeOutSpeech();
+    liveAccText = '';
+
+    // Show overlay immediately
+    document.getElementById('askBtn').classList.add('listening');
+    document.getElementById('askIcon').textContent = '⏹';
+    document.getElementById('askLabel').textContent = 'Stop';
+    document.getElementById('listenOverlay').classList.add('active');
+    document.getElementById('liveTranscript').innerHTML =
+      '<span class="interim">Connecting to Gemini…</span>';
+
+    liveWs = new WebSocket(WS_URL);
+    liveWs.binaryType = 'arraybuffer';
+
+    liveWs.onopen = async () => {
+      // Send plant context, weather location and history
+      const recentHistory = journal.slice(0, 4)
+        .map(e => `${e.common_name} (${e.health_status || 'Healthy'})`)
+        .join(', ');
+
+      liveWs.send(JSON.stringify({
+        plant_name:    plant.common_name,
+        health_status: plant.health_status || '',
+        diagnosis:     plant.diagnosis     || '',
+        location:      userLocation,
+        history:       recentHistory
+      }));
+
+      // Separate AudioContexts — mic at 16kHz, playback at 24kHz
+      try {
+        liveMicStream = await navigator.mediaDevices.getUserMedia({
+          audio: { sampleRate: 16000, channelCount: 1,
+                   echoCancellation: true, noiseSuppression: true }
+        });
+        liveMicCtx  = new AudioContext({ sampleRate: 16000 });
+        livePlayCtx = new AudioContext({ sampleRate: GEMINI_SAMPLE_RATE });
+        const source = liveMicCtx.createMediaStreamSource(liveMicStream);
+
+        // Use AudioWorklet if available (modern), fall back to ScriptProcessor
+        if (liveMicCtx.audioWorklet) {
+          const workletCode = `
+            class PCMProcessor extends AudioWorkletProcessor {
+              process(inputs) {
+                const f32 = inputs[0][0];
+                if (!f32) return true;
+                const i16 = new Int16Array(f32.length);
+                for (let i = 0; i < f32.length; i++)
+                  i16[i] = Math.max(-32768, Math.min(32767, f32[i] * 32768));
+                this.port.postMessage(i16.buffer, [i16.buffer]);
+                return true;
+              }
+            }
+            registerProcessor('pcm-processor', PCMProcessor);
+          `;
+          const blob = new Blob([workletCode], { type: 'application/javascript' });
+          const url  = URL.createObjectURL(blob);
+          await liveMicCtx.audioWorklet.addModule(url);
+          liveProcessor = new AudioWorkletNode(liveMicCtx, 'pcm-processor');
+          liveProcessor.port.onmessage = (e) => {
+            if (liveWs && liveWs.readyState === WebSocket.OPEN)
+              liveWs.send(e.data);
+          };
+          const gainNode = liveMicCtx.createGain();
+          gainNode.gain.value = 0; // Mute local echo
+          source.connect(liveProcessor);
+          liveProcessor.connect(gainNode);
+          gainNode.connect(liveMicCtx.destination);
+          URL.revokeObjectURL(url);
+        } else {
+          // Fallback: deprecated ScriptProcessor
+          liveProcessor = liveMicCtx.createScriptProcessor(4096, 1, 1);
+          liveProcessor.onaudioprocess = (e) => {
+            if (!liveWs || liveWs.readyState !== WebSocket.OPEN) return;
+            const f32 = e.inputBuffer.getChannelData(0);
+            const i16 = new Int16Array(f32.length);
+            for (let i = 0; i < f32.length; i++)
+              i16[i] = Math.max(-32768, Math.min(32767, f32[i] * 32768));
+            liveWs.send(i16.buffer);
+          };
+          const gainNode = liveMicCtx.createGain();
+          gainNode.gain.value = 0;
+          source.connect(liveProcessor);
+          liveProcessor.connect(gainNode);
+          gainNode.connect(liveMicCtx.destination);
+        }
+
+        document.getElementById('liveTranscript').innerHTML =
+          '<span class="interim">Listening — speak now…</span>';
+        setStatus('🎤 Gemini is listening');
+      } catch(e) {
+        setStatus('Mic access denied');
+        stopLiveSession();
+      }
+    };
+
+    liveWs.onmessage = (event) => {
+      // ── Binary frame = raw PCM audio from Gemini ──
+      if (event.data instanceof ArrayBuffer) {
+        if (!isMuted) enqueueAudio(event.data);
+        return;
+      }
+
+      // ── Text frame = JSON control message ──
+      let msg;
+      try { msg = JSON.parse(event.data); } catch(e) { return; }
+
+      if (msg.type === 'text_chunk') {
+        liveAccText += msg.text;
+        document.getElementById('liveTranscript').textContent = liveAccText;
+      }
+
+      if (msg.type === 'interrupted') {
+        // Barge-in confirmed — drain native audio queue immediately
+        stopAudioQueue();
+        liveAccText = '';
+        document.getElementById('liveTranscript').innerHTML =
+          '<span class="interim">Listening…</span>';
+      }
+
+      if (msg.type === 'turn_complete') {
+        const answer = msg.full_text || liveAccText;
+        const hasAudio = msg.has_audio || false;
+        const plant = selectedPlant || journal[0];
+        
+        // If there's no text but Gemini sent audio bytes, show an indicator instead of an empty bubble
+        const displayText = (answer.trim() === '' && hasAudio) ? '<i style="color:var(--text3)">🎤 Gemini replied via voice</i>' : answer;
+
+        document.getElementById('resultCard').innerHTML = `
+          <div class="result-inner">
+            <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;
+                        text-transform:uppercase;margin-bottom:10px">
+              🎤 Live · ${plant ? plant.common_name : ''}
+            </div>
+            <p class="result-story">${displayText}</p>
+          </div>`;
+        // Don't call speakResult — Gemini audio is already playing via queue
+        liveAccText = '';
+        document.getElementById('liveTranscript').innerHTML =
+          '<span class="interim">Ask another question…</span>';
+      }
+
+      if (msg.type === 'error') {
+        document.getElementById('liveTranscript').textContent = 'Error: ' + msg.message;
+        setTimeout(stopLiveSession, 2000);
+      }
+    };
+
+    // Send camera frame every 4s for proactive vision awareness
+    liveWs._cameraInterval = setInterval(() => {
+      if (!liveWs || liveWs.readyState !== WebSocket.OPEN) return;
+      const vid = document.getElementById('video');
+      if (!vid || !vid.srcObject) return;
+      try {
+        const cvs = document.createElement('canvas');
+        cvs.width = 320; cvs.height = 240;
+        cvs.getContext('2d').drawImage(vid, 0, 0, 320, 240);
+        const b64 = cvs.toDataURL('image/jpeg', 0.5).split(',')[1];
+        liveWs.send(JSON.stringify({ type: 'camera_frame', data: b64 }));
+      } catch(e) {}
+    }, 4000);
+
+    liveWs.onclose = () => {
+      stopLiveSession();
+      setStatus('Live session ended');
+    };
+
+    liveWs.onerror = () => {
+      document.getElementById('liveTranscript').textContent =
+        'Cannot connect to backend. Is it running?';
+      setTimeout(stopLiveSession, 2500);
+    };
+  }
+
+  function stopLiveSession() {
+    // Signal end of turn before closing
+    if (liveWs && liveWs.readyState === WebSocket.OPEN) {
+      try { liveWs.send(JSON.stringify({ type: 'end_of_turn' })); } catch(e) {}
+      if (liveWs._cameraInterval) clearInterval(liveWs._cameraInterval);
+      liveWs.close();
+    }
+    liveWs = null;
+
+    if (liveProcessor)  { try { liveProcessor.disconnect(); } catch(e) {} liveProcessor = null; }
+    if (liveMicStream)  { liveMicStream.getTracks().forEach(t => t.stop()); liveMicStream = null; }
+    if (liveMicCtx)     { try { liveMicCtx.close(); }  catch(e) {} liveMicCtx = null; }
+    if (livePlayCtx)    { try { livePlayCtx.close(); } catch(e) {} livePlayCtx = null; }
+    liveAudioQueue = []; liveIsPlaying = false;
+
+    document.getElementById('askBtn').classList.remove('listening');
+    document.getElementById('askIcon').textContent = '🎤';
+    document.getElementById('askLabel').textContent = 'Ask';
+    document.getElementById('listenOverlay').classList.remove('active');
+  }
+
+  function cancelListening() {
+    stopLiveSession();
+    setStatus('Cancelled');
+  }
+
+  // Keep stopListening as alias so nothing else breaks
+  function stopListening() { stopLiveSession(); }
+  function startListening() { startLiveSession(); }
+
+
+  async function saveToJournal(data) {
+    selectedPlant = data;
+    const entry = { ...data, timestamp:new Date().toLocaleString(), location:userLocation, mode:currentMode };
+    if (data.watering_schedule && currentMode==='doctor') {
+      try {
+        const res = await fetch(`${API_URL}/reminder`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ plant_name:data.common_name, watering_schedule:data.watering_schedule, user_id:'default' })
+        });
+        const r = await res.json();
+        entry.next_water_days = r.days_until_water;
+        const d = new Date(); d.setDate(d.getDate() + r.days_until_water);
+        entry.next_water_date = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      } catch(e) {}
+    }
+    journal.unshift(entry);
+    journal = journal.slice(0,50);
+    localStorage.setItem('sativus_journal', JSON.stringify(journal));
+    renderJournal(); updateStats();
+  }
+
+  function renderJournal() {
+    const list = document.getElementById('journalList');
+    const count = document.getElementById('journalCount');
+    count.textContent = `${journal.length} ${journal.length===1?'entry':'entries'}`;
+    if (!journal.length) {
+      list.innerHTML = `<div class="journal-empty"><span>🌱</span><p>No entries yet. Start scanning!</p></div>`;
+      return;
+    }
+    list.innerHTML = journal.slice(0,12).map((e,i) => {
+      const h=e.health_status||'', c=e.conservation_status||'';
+      const cc = h==='Critical'||c==='Endangered'?'danger': h==='Sick'?'sick': c==='Invasive'?'invasive':'';
+      const sc = cc==='danger'?'danger': cc==='sick'||cc==='invasive'?'sick':'good';
+      const em = e.category==='bird'?'🐦': e.category==='insect'?'🐛': e.category==='fungi'?'🍄': e.mode==='explorer'?'🔭':'🌿';
+      return `
+        <div class="j-card ${cc}" onclick="openEntry(${i})">
+          <div class="j-emoji">${em}</div>
+          <div class="j-info">
+            <div class="j-name">${e.common_name}</div>
+            <div class="j-sub">${e.scientific_name||''}${e.next_water_date?` <span class="j-water">· 💧 ${e.next_water_date}</span>`:''}</div>
+          </div>
+          <div class="j-status ${sc}">${h||c||'Healthy'}</div>
+        </div>`;
+    }).join('');
+  }
+
+  function openEntry(i) {
+    const e = journal[i];
+    selectedPlant = e;
+    const h=e.health_status||'', c=e.conservation_status||'';
+    const st=h||c||'Healthy';
+    const sc=h==='Critical'||c==='Endangered'?'danger': h==='Sick'||c==='Invasive'?'sick':'good';
+    let treatHTML='';
+    if (e.treatment_steps?.length) {
+      treatHTML = `<div class="treat-section"><div class="treat-header">Treatment Plan</div>
+        ${e.treatment_steps.map((s,i)=>`<div class="treat-step"><div class="step-num">${i+1}</div><span>${s}</span></div>`).join('')}
+      </div>`;
+    }
+    const metas = [];
+    if (e.watering_schedule) metas.push(`<span class="meta-chip">💧 ${e.watering_schedule}</span>`);
+    if (e.next_water_date) metas.push(`<span class="meta-chip chip-gold">Next: ${e.next_water_date}</span>`);
+    if (e.fun_fact) metas.push(`<span class="meta-chip">💡 ${e.fun_fact}</span>`);
+    const metaHTML = metas.length?`<div class="meta-row">${metas.join('')}</div>`:'';
+
+    const card = document.getElementById('resultCard');
+    card.className = `result-card ${sc}`;
+    card.innerHTML = `
+      <div class="result-inner">
+        <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:12px">
+          📓 Journal · ${e.timestamp}
+        </div>
+        <div class="result-top">
+          <div><div class="result-name">${e.common_name}</div><div class="result-sci">${e.scientific_name||''}</div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0">
+            <div class="badge ${sc}"><span class="badge-dot"></span>${st}</div>
+            <button class="speak-btn journal-speak-btn" data-story="" title="Speak">🔊</button>
+          </div>
+        </div>
+        <p class="result-story">${e.story}</p>
+        ${e.diagnosis?`<div class="diag-line"><span>◈</span><span>${e.diagnosis}</span></div>`:''}
+        ${metaHTML}${treatHTML}
+      </div>`;
+    
+    // Safely attach the story string avoiding inline quotation issues
+    const speakerBtn = card.querySelector('.journal-speak-btn');
+    if (speakerBtn) {
+      speakerBtn.dataset.story = e.story;
+      speakerBtn.onclick = () => speakResult(e.story);
+    }
+    // Scroll with offset so sticky header doesn't cover card
+    setTimeout(() => {
+      const rect = card.getBoundingClientRect();
+      const offset = 90; // header height + breathing room
+      const top = window.pageYOffset + rect.top - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }, 50);
+    // NO auto-speak on journal tap
+  }
+
+  // ── UPLOAD FUNCTIONS ──
+  let uploadedImageBase64 = null;
+
+  function showStartBtn() {
+    const btn = document.getElementById('startBtn');
+    if (!btn) return;
+    btn.style.display = 'flex'; btn.disabled = false;
+    btn.style.opacity = '0'; btn.style.transform = 'scale(0.9)';
+    requestAnimationFrame(() => {
+      btn.style.transition = 'opacity 0.3s, transform 0.3s';
+      btn.style.opacity = '1'; btn.style.transform = 'scale(1)';
+    });
+  }
+
+  function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) loadUploadFile(file);
+    e.target.value = '';
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    document.getElementById('cameraWrap').style.borderColor = 'var(--accent)';
+    document.getElementById('cameraWrap').style.boxShadow = '0 0 0 3px var(--accent-glow)';
+  }
+
+  function handleDragLeave(e) {
+    document.getElementById('cameraWrap').style.borderColor = '';
+    document.getElementById('cameraWrap').style.boxShadow = '';
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    handleDragLeave(e);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) loadUploadFile(file);
+  }
+
+  function loadUploadFile(file) {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      uploadedImageBase64 = ev.target.result;
+
+      // Stop live camera
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+      document.getElementById('video').style.display = 'none';
+
+      // Show uploaded image inside the camera box
+      const camImg = document.getElementById('camUploadImg');
+      camImg.src = uploadedImageBase64;
+      camImg.style.display = 'block';
+      document.getElementById('camIdle').style.display = 'none';
+
+      // Update upload button → becomes Clear button
+      const toggleBtn = document.getElementById('uploadToggle');
+      toggleBtn.classList.add('has-image');
+      document.getElementById('uploadToggleLabel').textContent = '✕ Clear image';
+      toggleBtn.onclick = () => clearUpload(true);
+
+      document.getElementById('scanBtn').disabled = false;
+      document.getElementById('askBtn').disabled = false;
+      setStatus('✦ Image loaded — tap Analyse');
+
+      // Start button reappears so user can go back to camera
+      showStartBtn();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearUpload(restartCamera) {
+    if (!uploadedImageBase64 && !document.getElementById('camUploadImg').src) return;
+    uploadedImageBase64 = null;
+    const camImg = document.getElementById('camUploadImg');
+    camImg.src = ''; camImg.style.display = 'none';
+    document.getElementById('video').style.display = 'block';
+
+    const toggleBtn = document.getElementById('uploadToggle');
+    toggleBtn.classList.remove('has-image');
+    document.getElementById('uploadToggleLabel').textContent = 'Upload Image';
+    toggleBtn.onclick = () => document.getElementById('fileInput').click();
+
+    // Only disable buttons and show idle if camera isn't running
+    if (!stream) {
+      document.getElementById('scanBtn').disabled = true;
+      document.getElementById('askBtn').disabled = true;
+      setStatus('Ready — start camera or upload');
+      document.getElementById('camIdle').style.display = 'flex';
+      document.getElementById('camIdle').querySelector('p').textContent = 'Tap Start to use camera';
+    } else {
+      setStatus('Ready ✦');
+    }
+  }
+
+  async function scanUpload() {
+    if (!uploadedImageBase64) return;
+    fadeOutSpeech();
+    document.getElementById('cameraWrap').classList.add('scanning');
+    document.getElementById('scanBtn').disabled = true;
+    setStatus('Analysing image…');
+    document.getElementById('resultCard').className = 'result-card';
+    document.getElementById('resultCard').innerHTML = `
+      <div class="skel-wrap">
+        <div class="skel skel-h"></div><div class="skel skel-s"></div>
+        <div class="skel skel-l"></div><div class="skel skel-l"></div><div class="skel skel-l sm"></div>
+      </div>`;
+    let dots = 0;
+    const si = setInterval(() => {
+      const msgs = ['Analysing image…', 'Identifying species…', 'Checking health…', 'Almost done…'];
+      dots = (dots + 1) % msgs.length; setStatus(msgs[dots]);
+    }, 2500);
+    try {
+      const res = await fetch(`${API_URL}/analyze`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: uploadedImageBase64, mode: currentMode, location: userLocation })
+      });
+      await displayResult(await res.json());
+    } catch(e) {
+      document.getElementById('resultCard').innerHTML = `
+        <div class="result-empty"><div class="empty-icon">⚠️</div><span>Backend offline. Run uvicorn main:app --reload</span></div>`;
+      setStatus('Connection error');
+    } finally {
+      clearInterval(si);
+      document.getElementById('cameraWrap').classList.remove('scanning');
+      document.getElementById('scanBtn').disabled = false;
+    }
+  }
+
+    if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+  }
+
+  renderJournal();
+  updateStats();
+  if (userLocation) { document.getElementById('locBtn').style.display = 'none'; }
+</script>
+</body>
+</html>
