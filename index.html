@@ -755,7 +755,7 @@
 </div>
 
 <script>
-  const API_URL = `http://${window.location.hostname || 'localhost'}:8000`;
+  const API_URL = window.location.origin;
   let stream = null, userLocation = null, currentMode = 'doctor';
   let journal = JSON.parse(localStorage.getItem('sativus_journal') || '[]');
   let isMuted = false, isListening = false, recognition = null;
@@ -1124,7 +1124,7 @@
   let liveIsPlaying  = false;
   let livePaused     = false; // barge-in flag
 
-  const WS_URL = `ws://${location.hostname || 'localhost'}:8000/ws/live`;
+  const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/live`;
   const GEMINI_SAMPLE_RATE = 24000; // Gemini Live always returns 24kHz PCM
 
   // Decode raw Int16 PCM bytes from Gemini into an AudioBuffer and queue it

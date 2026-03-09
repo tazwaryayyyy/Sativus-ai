@@ -1,5 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Optional, Any
 from google import genai
@@ -103,7 +104,41 @@ class ReminderRequest(BaseModel):
 # ══════════════════════════════════════════
 @app.get("/")
 def home():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    locations = [
+        os.path.join(base_dir, '..', 'frontend', 'index.html'),
+        os.path.join(base_dir, 'index.html'),
+        os.path.join(base_dir, '..', 'index.html'),
+        os.path.join(os.getcwd(), 'frontend', 'index.html'),
+        os.path.join(os.getcwd(), 'index.html')
+    ]
+    for path in locations:
+        if os.path.exists(path):
+            return FileResponse(path)
     return {"status": "Sativus AI — Gemini powered", "cached_entries": len(_cache)}
+
+@app.get("/manifest.json")
+def manifest():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    locations = [
+        os.path.join(base_dir, '..', 'frontend', 'manifest.json'),
+        os.path.join(base_dir, 'manifest.json'),
+        os.path.join(base_dir, '..', 'manifest.json'),
+        os.path.join(os.getcwd(), 'frontend', 'manifest.json'),
+        os.path.join(os.getcwd(), 'manifest.json')
+    ]
+    for path in locations:
+        if os.path.exists(path):
+            return FileResponse(path)
+    return {
+        "name": "Sativus AI",
+        "short_name": "Sativus",
+        "start_url": ".",
+        "display": "standalone",
+        "background_color": "#120f09",
+        "theme_color": "#120f09",
+        "description": "Plant Doctor & Nature Explorer"
+    }
 
 @app.get("/clear-cache")
 def clear_cache_route():
