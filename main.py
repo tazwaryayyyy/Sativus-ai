@@ -337,23 +337,32 @@ async def live_voice(websocket: WebSocket):
 
                         if "bytes" in msg and msg["bytes"]:
                             # PCM 16kHz 16-bit mono audio chunk from mic
-                            await session.send(
-                                input=types.LiveClientRealtimeInput(
-                                    media_chunks=[
-                                        types.Blob(
-                                            data=msg["bytes"],
-                                            mime_type="audio/pcm;rate=16000"
-                                        )
-                                    ]
+                            try:
+                                await session.send(
+                                    input=types.LiveClientRealtimeInput(
+                                        media_chunks=[
+                                            types.Blob(
+                                                data=msg["bytes"],
+                                                mime_type="audio/pcm;rate=16000"
+                                            )
+                                        ]
+                                    )
                                 )
-                            )
+                            except Exception as e:
+                                print(f"[LIVE] Failed to send audio chunk: {e}")
 
                         elif "text" in msg and msg["text"]:
-                            data = json.loads(msg["text"])
+                            try:
+                                data = json.loads(msg["text"])
+                            except json.JSONDecodeError:
+                                continue
 
                             if data.get("type") == "end_of_turn":
                                 interrupted = False
-                                await session.send(input="", end_of_turn=True)
+                                try:
+                                    await session.send(input="", end_of_turn=True)
+                                except Exception:
+                                    pass
 
                             elif data.get("type") == "barge_in":
                                 # User interrupted — signal Gemini to stop speaking
@@ -369,16 +378,19 @@ async def live_voice(websocket: WebSocket):
                             elif data.get("type") == "camera_frame" and data.get("data"):
                                 # Optional: send camera frame for proactive vision analysis
                                 frame_bytes = base64.b64decode(data["data"])
-                                await session.send(
-                                    input=types.LiveClientRealtimeInput(
-                                        media_chunks=[
-                                            types.Blob(
-                                                data=frame_bytes,
-                                                mime_type="image/jpeg"
-                                            )
-                                        ]
+                                try:
+                                    await session.send(
+                                        input=types.LiveClientRealtimeInput(
+                                            media_chunks=[
+                                                types.Blob(
+                                                    data=frame_bytes,
+                                                    mime_type="image/jpeg"
+                                                )
+                                            ]
+                                        )
                                     )
-                                )
+                                except Exception as e:
+                                    print(f"[LIVE] Failed to send camera frame: {e}")
 
                 except WebSocketDisconnect:
                     stop.set()

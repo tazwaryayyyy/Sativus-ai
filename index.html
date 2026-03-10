@@ -324,12 +324,16 @@
     .btn-scan:hover { box-shadow:0 12px 32px var(--accent-glow), inset 0 1px 1px rgba(255,255,255,0.5); transform: translateY(-2px); }
 
     .btn-ask {
-      background:var(--warm-card2); color:var(--text2);
-      border:1px solid var(--border-bright);
+      background: var(--accent);
+      color:#0a1a0a; font-weight:700; letter-spacing:0.3px;
+      box-shadow:0 8px 24px var(--accent-glow), inset 0 1px 1px rgba(255,255,255,0.4);
+      transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+      border: 1px solid transparent;
     }
+    .btn-ask:hover { box-shadow:0 12px 32px var(--accent-glow), inset 0 1px 1px rgba(255,255,255,0.5); transform: translateY(-2px); }
     .btn-ask.listening {
       background:rgba(244,196,48,0.1); border-color:rgba(244,196,48,0.4);
-      color:var(--saffron); animation:pulseGlow 1.5s ease-in-out infinite;
+      color:var(--saffron); box-shadow:none; animation:pulseGlow 1.5s ease-in-out infinite;
     }
     .btn-ask.speaking {
       background:rgba(244,196,48,0.1); border-color:var(--border-bright);
@@ -342,9 +346,10 @@
     }
 
     .btn-mute {
-      flex:0 0 50px; background:var(--warm-card2); color:var(--text3);
-      border:1px solid var(--border);
+      flex:0 0 50px; background:var(--warm-card2); color:var(--text2);
+      border:1px solid var(--border-bright);
     }
+    .btn-mute:hover { background:rgba(255,245,220,0.1); color:var(--text); }
     .btn-mute.muted { background:var(--red-dim); border-color:rgba(248,113,113,0.3); color:var(--red); }
 
     /* ── UPLOAD SECTION ── */
@@ -788,24 +793,20 @@
 
   function requestLocation() {
     if (!navigator.geolocation) { setStatus('Location not supported'); return; }
-    // Hide immediately on tap, exactly like the Start button
-    const btn = document.getElementById('locBtn');
-    btn.style.transition = 'opacity 0.3s, transform 0.3s';
-    btn.style.opacity = '0';
-    btn.style.transform = 'scale(0.9)';
-    setTimeout(() => { btn.style.display = 'none'; }, 320);
     setStatus('Getting location…');
     navigator.geolocation.getCurrentPosition(
       p => {
         userLocation = { lat: p.coords.latitude, lng: p.coords.longitude };
         localStorage.setItem('sativus_location', JSON.stringify(userLocation));
         setStatus('Location saved ✦');
+        // Hide on success
+        const btn = document.getElementById('locBtn');
+        btn.style.transition = 'opacity 0.3s, transform 0.3s';
+        btn.style.opacity = '0';
+        btn.style.transform = 'scale(0.9)';
+        setTimeout(() => { btn.style.display = 'none'; }, 320);
       },
       () => {
-        // Show it again if denied
-        btn.style.display = 'flex';
-        btn.style.opacity = '1';
-        btn.style.transform = 'scale(1)';
         setStatus('Location denied — tap 📍 to retry');
       }
     );
@@ -1166,7 +1167,7 @@
   }
 
   function handleAsk() {
-    if (liveWs && liveWs.readyState === WebSocket.OPEN) {
+    if (liveWs && (liveWs.readyState === WebSocket.OPEN || liveWs.readyState === WebSocket.CONNECTING)) {
       stopLiveSession();
     } else {
       startLiveSession();
@@ -1176,7 +1177,7 @@
   function startLiveSession() {
     const plant = selectedPlant || journal[0];
     if (!plant) {
-      setStatus('Scan a plant first!');
+      setStatus('Scan something first!');
       return;
     }
 
