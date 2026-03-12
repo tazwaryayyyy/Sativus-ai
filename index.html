@@ -273,8 +273,8 @@
 
     .corner {
       position:absolute; width:18px; height:18px;
-      border-color:var(--accent); border-style:solid; transition:border-color var(--theme-speed) ease;
-      opacity:0; transition:opacity 0.3s;
+      border-color:var(--accent); border-style:solid;
+      opacity:0; transition:opacity 0.3s, border-color var(--theme-speed) ease;
     }
     .scanning .corner { opacity:0.7; }
     .corner.tl{top:10px;left:10px;border-width:2px 0 0 2px;border-radius:4px 0 0 0}
@@ -1076,9 +1076,9 @@
 
   function resetAskBtnUI() {
     const askBtn = document.getElementById('askBtn');
-    if (askBtn.classList.contains('speaking')) {
+    if (askBtn.classList.contains('speaking') || askBtn.classList.contains('listening')) {
       askBtn.onclick = handleAsk;
-      askBtn.classList.remove('speaking');
+      askBtn.classList.remove('speaking', 'listening');
       document.getElementById('askIcon').textContent = '🎤';
       document.getElementById('askLabel').textContent = 'Ask';
     }
@@ -1554,7 +1554,7 @@
   }
 
   function clearUpload(restartCamera) {
-    if (!uploadedImageBase64 && !document.getElementById('camUploadImg').src) return;
+    if (!uploadedImageBase64) return;
     uploadedImageBase64 = null;
     const camImg = document.getElementById('camUploadImg');
     camImg.src = ''; camImg.style.display = 'none';

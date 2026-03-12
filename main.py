@@ -234,7 +234,8 @@ async def create_reminder(req: ReminderRequest):
         if not days_text:
             days_text = call_text(prompt)
             set_cache(cache_key, days_text)
-        days = int(''.join(filter(str.isdigit, days_text))) or 7
+        digits = ''.join(filter(str.isdigit, days_text))
+        days = int(digits) if digits else 7
     except:
         days = 7
     return {
