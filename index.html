@@ -886,9 +886,35 @@
 
   function captureFrame() {
     const v = document.getElementById('video'), c = document.getElementById('canvas');
-    c.width = v.videoWidth || 1280; c.height = v.videoHeight || 960;
-    c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
-    return c.toDataURL('image/jpeg', 0.92);
+    // Resize down for OOM protection on 512MB backend
+    const maxW = 1200;
+    let w = v.videoWidth || 1280;
+    let h = v.videoHeight || 960;
+    if (w > maxW) {
+      h = Math.round(h * (maxW / w));
+      w = maxW;
+    }
+    c.width = w; c.height = h;
+    c.getContext('2d').drawImage(v, 0, 0, w, h);
+    return c.toDataURL('image/jpeg', 0.85); // Lower quality slightly to save bandwidth/RAM
+  }
+
+  function resizeImage(base64, maxWidth, callback) {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width;
+      let h = img.height;
+      if (w > maxWidth) {
+        h = Math.round(h * (maxWidth / w));
+        w = maxWidth;
+      }
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    img.src = base64;
   }
 
   // Unified analyse — uses uploaded image if present, otherwise live camera
@@ -1523,32 +1549,39 @@
   }
 
   function loadUploadFile(file) {
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image too large (max 10MB)');
+      return;
+    }
     const reader = new FileReader();
     reader.onload = ev => {
-      uploadedImageBase64 = ev.target.result;
+      // Resize on client side before setting as uploadedImageBase64
+      resizeImage(ev.target.result, 1200, resized => {
+        uploadedImageBase64 = resized;
 
-      // Stop live camera
-      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-      document.getElementById('video').style.display = 'none';
+        // Stop live camera
+        if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+        document.getElementById('video').style.display = 'none';
 
-      // Show uploaded image inside the camera box
-      const camImg = document.getElementById('camUploadImg');
-      camImg.src = uploadedImageBase64;
-      camImg.style.display = 'block';
-      document.getElementById('camIdle').style.display = 'none';
+        // Show uploaded image inside the camera box
+        const camImg = document.getElementById('camUploadImg');
+        camImg.src = uploadedImageBase64;
+        camImg.style.display = 'block';
+        document.getElementById('camIdle').style.display = 'none';
 
-      // Update upload button → becomes Clear button
-      const toggleBtn = document.getElementById('uploadToggle');
-      toggleBtn.classList.add('has-image');
-      document.getElementById('uploadToggleLabel').textContent = '✕ Clear image';
-      toggleBtn.onclick = () => clearUpload(true);
+        // Update upload button → becomes Clear button
+        const toggleBtn = document.getElementById('uploadToggle');
+        toggleBtn.classList.add('has-image');
+        document.getElementById('uploadToggleLabel').textContent = '✕ Clear image';
+        toggleBtn.onclick = () => clearUpload(true);
 
-      document.getElementById('scanBtn').disabled = false;
-      document.getElementById('askBtn').disabled = false;
-      setStatus('✦ Image loaded — tap Analyse');
+        document.getElementById('scanBtn').disabled = false;
+        document.getElementById('askBtn').disabled = false;
+        setStatus('✦ Image loaded — tap Analyse');
 
-      // Start button reappears so user can go back to camera
-      showStartBtn();
+        // Start button reappears so user can go back to camera
+        showStartBtn();
+      });
     };
     reader.readAsDataURL(file);
   }

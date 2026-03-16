@@ -1,6 +1,6 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 from typing import Optional, Any
 from google import genai
@@ -12,6 +12,7 @@ import os
 import asyncio
 import hashlib
 import time
+import threading
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,30 +24,52 @@ FLASH_MODEL = "gemini-2.0-flash"
 LIVE_MODEL  = "gemini-2.0-flash-live-001"  # upgrade to native-audio-dialog when quota available
 
 app = FastAPI()
+
+# ── SECURITY: RESTRICTED CORS ──
+# Update these to your actual production domains for maximum safety
+ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+    "http://localhost:3000",
+    "https://sativus-ai.web.app", # Example production origin
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
+    allow_origins=ALLOWED_ORIGINS if os.getenv("PROD") else ["*"],
+    allow_methods=["GET", "POST"], # Restrict methods
     allow_headers=["*"],
 )
+
+# ── SECURITY/OOM: REQUEST SIZE LIMIT ──
+@app.middleware("http")
+async def limit_request_size(request: Request, call_next):
+    if request.method == "POST":
+        cl = request.headers.get("content-length")
+        if cl and int(cl) > 10 * 1024 * 1024:  # 10MB Limit
+            return JSONResponse(status_code=413, content={"found": False, "error": "payload too large (max 10MB)"})
+    return await call_next(request)
 
 # ══════════════════════════════════════════
 # CACHE
 # ══════════════════════════════════════════
 _cache = {}
+_cache_lock = threading.Lock()
 CACHE_TTL = 3600
 
 def get_cached(key):
-    entry = _cache.get(key)
-    if entry and (time.time() - entry["timestamp"]) < CACHE_TTL:
-        return entry["response"]
+    with _cache_lock:
+        entry = _cache.get(key)
+        if entry and (time.time() - entry["timestamp"]) < CACHE_TTL:
+            return entry["response"]
     return None
 
 def set_cache(key, response):
-    _cache[key] = {"response": response, "timestamp": time.time()}
-    if len(_cache) > 100:
-        oldest = min(_cache, key=lambda k: _cache[k]["timestamp"])
-        del _cache[oldest]
+    with _cache_lock:
+        _cache[key] = {"response": response, "timestamp": time.time()}
+        if len(_cache) > 100:
+            oldest = min(_cache, key=lambda k: _cache[k]["timestamp"])
+            del _cache[oldest]
 
 # ══════════════════════════════════════════
 # HELPERS
@@ -108,9 +131,7 @@ def home():
     locations = [
         os.path.join(base_dir, '..', 'frontend', 'index.html'),
         os.path.join(base_dir, 'index.html'),
-        os.path.join(base_dir, '..', 'index.html'),
-        os.path.join(os.getcwd(), 'frontend', 'index.html'),
-        os.path.join(os.getcwd(), 'index.html')
+        os.path.join(base_dir, '..', 'index.html')
     ]
     for path in locations:
         if os.path.exists(path):
@@ -123,9 +144,7 @@ def manifest():
     locations = [
         os.path.join(base_dir, '..', 'frontend', 'manifest.json'),
         os.path.join(base_dir, 'manifest.json'),
-        os.path.join(base_dir, '..', 'manifest.json'),
-        os.path.join(os.getcwd(), 'frontend', 'manifest.json'),
-        os.path.join(os.getcwd(), 'manifest.json')
+        os.path.join(base_dir, '..', 'manifest.json')
     ]
     for path in locations:
         if os.path.exists(path):
@@ -142,20 +161,26 @@ def manifest():
 
 @app.get("/clear-cache")
 def clear_cache_route():
-    _cache.clear()
+    with _cache_lock:
+        _cache.clear()
     return {"status": "Cache cleared!"}
 
 @app.post("/analyze")
 async def analyze(req: AnalyzeRequest):
+    # Basic sanitization and OOM protection
+    if not req.image or len(req.image) > 15 * 1024 * 1024:
+        return {"found": False, "error": "invalid or too large image string (max 15MB base64)"}
+        
     try:
         raw_b64 = req.image.split(',')[1] if ',' in req.image else req.image
         image_data = base64.b64decode(raw_b64)
-    except Exception as e:
+    except Exception:
         return {"found": False, "error": "image decode failed"}
 
     safe_location = redact_location(req.location)
+    mode = "doctor" if req.mode == "doctor" else "explorer"
 
-    if req.mode == "doctor":
+    if mode == "doctor":
         prompt = """You are an expert botanist. Examine this image carefully.
 Identify any plant — even partial or dark images. Never say "Unknown Plant".
 
@@ -227,7 +252,11 @@ If nothing living: {"found": false}"""
 
 @app.post("/reminder")
 async def create_reminder(req: ReminderRequest):
-    prompt = f"Plant: {req.plant_name}\nSchedule: {req.watering_schedule}\nDays until next watering? Reply with ONE number only."
+    # Sanitize inputs to prevent prompt injection
+    plant_name = "".join(ch for ch in req.plant_name[:50] if ch.isalnum() or ch in " -")
+    schedule = "".join(ch for ch in req.watering_schedule[:50] if ch.isalnum() or ch in " -")
+    
+    prompt = f"Plant: {plant_name}\nSchedule: {schedule}\nDays until next watering? Reply with ONE number only."
     try:
         cache_key = hashlib.md5(prompt.encode()).hexdigest()
         days_text = get_cached(cache_key)
@@ -378,6 +407,8 @@ async def live_voice(websocket: WebSocket):
 
                             elif data.get("type") == "camera_frame" and data.get("data"):
                                 # Optional: send camera frame for proactive vision analysis
+                                if len(data["data"]) > 1 * 1024 * 1024: # 1MB limit for WebSocket frames
+                                    continue
                                 frame_bytes = base64.b64decode(data["data"])
                                 try:
                                     await session.send(
