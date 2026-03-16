@@ -17,7 +17,7 @@ Built as a submission for the **Gemini Live Agent Challenge**, Sativus AI uses t
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/sativus-ai.git](https://github.com/tazwaryayyyy/Sativus-ai.git
+   git clone https://github.com/tazwaryayyyy/Sativus-ai.git
    cd sativus-ai
    ```
 
