@@ -1,0 +1,9 @@
+{
+    "name": "Sativus AI",
+    "short_name": "Sativus",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#120f09",
+    "theme_color": "#120f09",
+    "description": "Conversational plant doctor and nature explorer powered by Groq Vision"
+}
