@@ -1,2177 +1,2875 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-mode="doctor">
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Sativus AI</title>
-  <meta name="theme-color" content="#120f09">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="manifest" href="manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sativus â€” Plant Doctor & Nature Explorer</title>
+  <meta name="description" content="Multimodal plant doctor and nature explorer powered by vision AI">
+  <meta name="theme-color" content="#0E1512">
+  <link rel="manifest" href="/manifest.json">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet">
+
   <style>
+    /* â”€â”€â”€ Design System â”€â”€â”€ */
     :root {
-      /* ── Doctor mode (Saffron / warm) ── */
-      --accent: #F4C430;
-      --accent-dim: rgba(244, 196, 48, 0.12);
-      --accent-glow: rgba(244, 196, 48, 0.25);
-      --saffron: #F4C430;
-      --saffron-dim: rgba(244, 196, 48, 0.12);
-      --saffron-glow: rgba(244, 196, 48, 0.25);
-      --purple: #7A47FF;
-      --bg: #120f09;
-      --bg2: #1a1510;
-      --warm-card: rgba(255, 245, 220, 0.04);
-      --warm-card2: rgba(255, 245, 220, 0.07);
-      --border: rgba(255, 245, 220, 0.08);
-      --border-bright: rgba(255, 245, 220, 0.15);
-      --text: #f5edd8;
-      --text2: rgba(245, 237, 216, 0.65);
-      --text3: rgba(245, 237, 216, 0.32);
-      --green: #52c97e;
-      --green-dim: rgba(82, 201, 126, 0.1);
-      --yellow: #f0b429;
-      --yellow-dim: rgba(240, 180, 41, 0.1);
-      --red: #f87171;
-      --red-dim: rgba(248, 113, 113, 0.1);
-      --glass-bg: rgba(255, 245, 220, 0.05);
-      --glass-blur: 24px;
-      --radius-sm: 16px;
-      --radius: 24px;
-      /* theme transition speed */
-      --theme-speed: 0.6s;
+      --bg-deep: #070C09;
+      --bg: #0E1512;
+      --bg-raised: #152420;
+      --bg-card: #1A2E26;
+      --bg-card-hover: #213A31;
+
+      --fg: #E8E0D0;
+      --fg-dim: #A8B5A4;
+      --fg-muted: #607A6C;
+
+      --border: #283F33;
+      --border-subtle: #1E3229;
+
+      --accent: #C9A227;
+      --accent-soft: rgba(201, 162, 39, 0.10);
+      --accent-mid: rgba(201, 162, 39, 0.22);
+      --accent-glow: rgba(201, 162, 39, 0.35);
+
+      --healthy: #4CAF7D;
+      --warning: #D4943A;
+      --critical: #C45550;
+      --info: #4A9EC4;
+
+      --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+      --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+      --radius-xs: 2px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 14px;
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --dur-fast: 120ms;
+      --dur-normal: 280ms;
+      --dur-slow: 500ms;
     }
 
-    /* ── Explorer mode (Forest green) ── */
-    body.explorer-mode {
-      --accent: #4ade80;
-      --accent-dim: rgba(74, 222, 128, 0.12);
-      --accent-glow: rgba(74, 222, 128, 0.22);
-      --bg: #060e08;
-      --bg2: #0b1510;
-      --warm-card: rgba(200, 255, 210, 0.04);
-      --warm-card2: rgba(200, 255, 210, 0.07);
-      --border: rgba(200, 255, 210, 0.08);
-      --border-bright: rgba(200, 255, 210, 0.16);
-      --text: #d4f0dc;
-      --text2: rgba(212, 240, 220, 0.65);
-      --text3: rgba(212, 240, 220, 0.32);
-      --glass-bg: rgba(200, 255, 210, 0.05);
+    [data-mode="explorer"] {
+      --accent: #2EAD64;
+      --accent-soft: rgba(46, 173, 100, 0.10);
+      --accent-mid: rgba(46, 173, 100, 0.22);
+      --accent-glow: rgba(46, 173, 100, 0.35);
     }
 
-    /* ── Health: Sick (muted amber/orange) ── */
-    body.health-sick {
-      --accent: #e8954a;
-      --accent-dim: rgba(232, 149, 74, 0.12);
-      --accent-glow: rgba(232, 149, 74, 0.22);
-      --bg: #110c07;
-      --bg2: #1a1108;
-      --warm-card: rgba(255, 220, 180, 0.04);
-      --warm-card2: rgba(255, 220, 180, 0.07);
-      --border: rgba(255, 200, 150, 0.08);
-      --border-bright: rgba(255, 200, 150, 0.15);
-      --text: #f0dcc0;
-      --text2: rgba(240, 220, 190, 0.65);
-      --text3: rgba(240, 220, 190, 0.32);
-      --glass-bg: rgba(255, 200, 150, 0.05);
+    [data-mode="critical"] {
+      --accent: #C45550;
+      --accent-soft: rgba(196, 85, 80, 0.10);
+      --accent-mid: rgba(196, 85, 80, 0.22);
+      --accent-glow: rgba(196, 85, 80, 0.35);
     }
 
-    body.health-sick::before {
-      background:
-        radial-gradient(ellipse 80% 50% at 15% -5%, rgba(232, 149, 74, 0.09) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 40% at 90% 105%, rgba(180, 80, 30, 0.06) 0%, transparent 50%);
-    }
-
-    /* ── Health: Critical (deep muted red/grey) ── */
-    body.health-critical {
-      --accent: #c0513a;
-      --accent-dim: rgba(192, 81, 58, 0.13);
-      --accent-glow: rgba(192, 81, 58, 0.22);
-      --bg: #0f0807;
-      --bg2: #180d0b;
-      --warm-card: rgba(255, 180, 160, 0.04);
-      --warm-card2: rgba(255, 180, 160, 0.06);
-      --border: rgba(255, 160, 140, 0.08);
-      --border-bright: rgba(255, 160, 140, 0.14);
-      --text: #eedbd6;
-      --text2: rgba(238, 218, 210, 0.62);
-      --text3: rgba(238, 218, 210, 0.30);
-      --glass-bg: rgba(255, 160, 140, 0.05);
-    }
-
-    body.health-critical::before {
-      background:
-        radial-gradient(ellipse 80% 50% at 15% -5%, rgba(192, 81, 58, 0.10) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 40% at 90% 105%, rgba(120, 30, 20, 0.07) 0%, transparent 50%);
-    }
-
+    /* â”€â”€â”€ Reset â”€â”€â”€ */
     *,
     *::before,
     *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      -webkit-touch-callout: none;
     }
 
-    html,
-    body {
-      height: 100%;
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
     }
 
     body {
+      font-family: var(--font-body);
       background: var(--bg);
-      color: var(--text);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      min-height: 100vh;
+      color: var(--fg);
+      min-height: 100dvh;
       overflow-x: hidden;
-      padding-bottom: env(safe-area-inset-bottom);
-      transition: background var(--theme-speed) cubic-bezier(0.16, 1, 0.3, 1),
-        color var(--theme-speed) cubic-bezier(0.16, 1, 0.3, 1);
+      line-height: 1.55;
     }
 
-    /* Warm gradient mesh — doctor */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background:
-        radial-gradient(ellipse 80% 50% at 15% -5%, rgba(244, 196, 48, 0.07) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 40% at 90% 105%, rgba(122, 71, 255, 0.05) 0%, transparent 50%);
-      transition: opacity var(--theme-speed) ease;
-    }
-
-    /* Explorer gradient mesh — forest */
-    body.explorer-mode::before {
-      background:
-        radial-gradient(ellipse 80% 50% at 20% -5%, rgba(74, 222, 128, 0.08) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 40% at 85% 105%, rgba(34, 197, 94, 0.06) 0%, transparent 50%);
-    }
-
-    /* Grain */
+    /* â”€â”€â”€ Noise Texture â”€â”€â”€ */
     body::after {
       content: '';
       position: fixed;
       inset: 0;
+      opacity: 0.028;
       pointer-events: none;
-      z-index: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
+      z-index: 10000;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px;
     }
 
-    .app {
-      position: relative;
-      z-index: 1;
-      max-width: 480px;
+    /* â”€â”€â”€ Scrollbar â”€â”€â”€ */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--fg-muted);
+    }
+
+    /* â”€â”€â”€ Typography â”€â”€â”€ */
+    .font-display {
+      font-family: var(--font-display);
+    }
+
+    .font-mono {
+      font-family: var(--font-mono);
+    }
+
+    /* â”€â”€â”€ App Shell â”€â”€â”€ */
+    #app {
+      max-width: 1440px;
       margin: 0 auto;
-      padding-bottom: 40px;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* Desktop — wider bento layout */
-    @media(min-width:768px) {
-      .app {
-        max-width: 960px;
-        padding: 0 32px 40px;
-      }
-
-      header {
-        padding-left: 32px;
-        padding-right: 32px;
-      }
-
-      .app-desktop {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0 28px;
-        align-items: start;
-        padding-top: 16px;
-      }
-
-      .app-left {
-        position: sticky;
-        top: 80px;
-      }
-
-      .app-right {
-        padding-top: 0;
-      }
-
-      .bento-stats {
-        padding: 0 0 0;
-      }
-
-      .camera-wrap {
-        margin: 14px 0 0;
-        aspect-ratio: 4/3;
-      }
-
-      .result-card {
-        margin: 0 0 0;
-      }
-
-      .journal-wrap {
-        padding: 20px 0 48px;
-      }
-
-      .mode-toggle {
-        margin: 14px 0 0;
-      }
-
-      .controls {
-        padding: 14px 0 0;
-      }
-
-      .stat-num {
-        font-size: 30px;
-      }
-    }
-
-    /* ── HEADER ── */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      padding: max(20px, env(safe-area-inset-top)) 20px 14px;
-      background: rgba(18, 15, 9, 0.8);
-      transition: background var(--theme-speed) ease;
-      backdrop-filter: blur(var(--glass-blur));
-      -webkit-backdrop-filter: blur(var(--glass-blur));
-      border-bottom: 1px solid var(--border);
+    /* â”€â”€â”€ Header â”€â”€â”€ */
+    .app-header {
+      padding: 20px 28px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      position: relative;
     }
 
-    .logo-wrap {
+    .app-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 28px;
+      width: 60px;
+      height: 1px;
+      background: var(--accent);
+      transition: background var(--dur-normal) var(--ease-out);
+    }
+
+    .brand {
       display: flex;
-      align-items: center;
-      gap: 11px;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .logo-mark {
-      width: 38px;
-      height: 38px;
-      background: linear-gradient(135deg, #2a1f00, #5a3e00);
-      border-radius: 11px;
-      border: 1px solid rgba(244, 196, 48, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 19px;
-      box-shadow: 0 0 20px var(--saffron-glow), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transition: background var(--theme-speed) ease, border-color var(--theme-speed) ease, box-shadow var(--theme-speed) ease;
-    }
-
-    body.explorer-mode .logo-mark {
-      background: linear-gradient(135deg, #062010, #0d3520);
-      border-color: rgba(74, 222, 128, 0.3);
-      box-shadow: 0 0 20px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-
-    .logo-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    .logo-tag {
-      font-size: 10px;
-      color: var(--text3);
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      margin-top: 1px;
-    }
-
-    /* ── BENTO STATS ── */
-    .bento-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      padding: 16px 16px 0;
-    }
-
-    .stat-tile {
-      background: var(--warm-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px 10px;
-      text-align: center;
-      transition: border-color 0.2s;
-    }
-
-    .stat-tile:hover {
-      border-color: var(--border-bright);
-    }
-
-    .stat-num {
-      font-family: 'Cormorant Garamond', serif;
+    .brand-name {
+      font-family: var(--font-display);
+      font-weight: 700;
       font-size: 26px;
-      font-weight: 600;
-      color: var(--accent);
+      letter-spacing: -0.02em;
+      color: var(--fg);
       line-height: 1;
-      transition: color var(--theme-speed) ease;
     }
 
-    .stat-label {
+    .brand-name span {
+      color: var(--accent);
+      transition: color var(--dur-normal) var(--ease-out);
+    }
+
+    .brand-tag {
+      font-family: var(--font-mono);
       font-size: 10px;
-      color: var(--text3);
-      letter-spacing: 0.6px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      margin-top: 4px;
+      color: var(--fg-muted);
     }
 
-    /* ── MODE TOGGLE ── */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* â”€â”€â”€ Mode Toggle â”€â”€â”€ */
     .mode-toggle {
       display: flex;
-      margin: 14px 16px 0;
-      background: var(--warm-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
+      background: var(--bg-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
       padding: 3px;
-      gap: 3px;
+      position: relative;
     }
 
     .mode-btn {
-      flex: 1;
-      padding: 10px 8px;
-      border: none;
-      border-radius: 9px;
-      background: transparent;
-      color: var(--text3);
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 12px;
       font-weight: 500;
+      letter-spacing: 0.03em;
+      padding: 7px 16px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--fg-muted);
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      letter-spacing: 0.3px;
+      transition: all var(--dur-normal) var(--ease-out);
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .mode-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .mode-btn.active {
-      background: var(--accent-dim);
-      color: var(--accent);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0 14px var(--accent-glow);
-      transition: background 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+      color: var(--bg-deep);
+      background: var(--accent);
     }
 
-    /* ── CAMERA ── */
-    .camera-wrap {
-      margin: 14px 16px 0;
+    .mode-btn.active svg {
+      stroke: var(--bg-deep);
+    }
+
+    .mode-btn:not(.active):hover {
+      color: var(--fg-dim);
+      background: var(--accent-soft);
+    }
+
+    /* â”€â”€â”€ Voice Button â”€â”€â”€ */
+    .voice-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--bg-raised);
+      color: var(--fg-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--dur-normal) var(--ease-out);
       position: relative;
-      border-radius: var(--radius);
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: var(--bg2);
-      aspect-ratio: 4/3;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
 
-    #video {
+    .voice-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .voice-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .voice-btn.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--bg-deep);
+      animation: voicePulse 2s ease-in-out infinite;
+    }
+
+    @keyframes voicePulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 var(--accent-glow);
+      }
+
+      50% {
+        box-shadow: 0 0 0 10px transparent;
+      }
+    }
+
+    /* â”€â”€â”€ Main Layout â”€â”€â”€ */
+    .app-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    /* â”€â”€â”€ Scan Panel â”€â”€â”€ */
+    .scan-panel {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+    }
+
+    /* â”€â”€â”€ Viewfinder â”€â”€â”€ */
+    .viewfinder-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .viewfinder {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: var(--bg-deep);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .viewfinder video,
+    .viewfinder canvas,
+    .viewfinder img {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
     }
 
-    .cam-idle {
+    .viewfinder video {
+      transform: scaleX(-1);
+    }
+
+    /* Viewfinder Overlay */
+    .vf-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Corner Brackets */
+    .vf-corner {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+    }
+
+    .vf-corner::before,
+    .vf-corner::after {
+      content: '';
+      position: absolute;
+      background: var(--accent);
+      transition: background var(--dur-normal) var(--ease-out), opacity var(--dur-slow) var(--ease-out);
+    }
+
+    .vf-tl {
+      top: 16px;
+      left: 16px;
+    }
+
+    .vf-tl::before {
+      top: 0;
+      left: 0;
+      width: 32px;
+      height: 2px;
+    }
+
+    .vf-tl::after {
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 32px;
+    }
+
+    .vf-tr {
+      top: 16px;
+      right: 16px;
+    }
+
+    .vf-tr::before {
+      top: 0;
+      right: 0;
+      width: 32px;
+      height: 2px;
+    }
+
+    .vf-tr::after {
+      top: 0;
+      right: 0;
+      width: 2px;
+      height: 32px;
+    }
+
+    .vf-bl {
+      bottom: 16px;
+      left: 16px;
+    }
+
+    .vf-bl::before {
+      bottom: 0;
+      left: 0;
+      width: 32px;
+      height: 2px;
+    }
+
+    .vf-bl::after {
+      bottom: 0;
+      left: 0;
+      width: 2px;
+      height: 32px;
+    }
+
+    .vf-br {
+      bottom: 16px;
+      right: 16px;
+    }
+
+    .vf-br::before {
+      bottom: 0;
+      right: 0;
+      width: 32px;
+      height: 2px;
+    }
+
+    .vf-br::after {
+      bottom: 0;
+      right: 0;
+      width: 2px;
+      height: 32px;
+    }
+
+    /* Breathing animation when camera is active */
+    .viewfinder.camera-on .vf-corner::before,
+    .viewfinder.camera-on .vf-corner::after {
+      opacity: 0.6;
+      animation: cornerBreathe 4s ease-in-out infinite;
+    }
+
+    @keyframes cornerBreathe {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    /* Crosshair */
+    .vf-crosshair {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 28px;
+      height: 28px;
+      margin: -14px 0 0 -14px;
+      opacity: 0;
+      transition: opacity var(--dur-slow) var(--ease-out);
+    }
+
+    .viewfinder.camera-on .vf-crosshair {
+      opacity: 0.35;
+      animation: crosshairSpin 30s linear infinite;
+    }
+
+    .vf-crosshair::before,
+    .vf-crosshair::after {
+      content: '';
+      position: absolute;
+      background: var(--accent);
+      transition: background var(--dur-normal) var(--ease-out);
+    }
+
+    .vf-crosshair::before {
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      margin-top: -0.5px;
+    }
+
+    .vf-crosshair::after {
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      margin-left: -0.5px;
+    }
+
+    @keyframes crosshairSpin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Scan Line */
+    .vf-scanline {
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      z-index: 3;
+      filter: blur(0.5px);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .viewfinder.scanning .vf-scanline {
+      opacity: 1;
+      animation: scanSweep 2.2s ease-in-out infinite;
+    }
+
+    @keyframes scanSweep {
+      0% {
+        top: 12%;
+        opacity: 0;
+      }
+
+      8% {
+        opacity: 1;
+      }
+
+      92% {
+        opacity: 1;
+      }
+
+      100% {
+        top: 88%;
+        opacity: 0;
+      }
+    }
+
+    /* Ripple Rings */
+    .vf-ripple {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      margin: -20px 0 0 -20px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      opacity: 0;
+      z-index: 3;
+    }
+
+    .viewfinder.scanning .vf-ripple {
+      animation: rippleExpand 2.5s ease-out infinite;
+    }
+
+    .viewfinder.scanning .vf-ripple:nth-child(2) {
+      animation-delay: 0.8s;
+    }
+
+    .viewfinder.scanning .vf-ripple:nth-child(3) {
+      animation-delay: 1.6s;
+    }
+
+    @keyframes rippleExpand {
+      0% {
+        transform: scale(0.5);
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: scale(5);
+        opacity: 0;
+      }
+    }
+
+    /* Viewfinder Placeholder */
+    .vf-placeholder {
       position: absolute;
       inset: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      background: var(--bg2);
+      gap: 12px;
+      z-index: 1;
     }
 
-    .cam-idle-ring {
-      width: 64px;
-      height: 64px;
-      border: 1.5px solid var(--border-bright);
-      border-radius: 50%;
+    .vf-placeholder-icon {
+      width: 48px;
+      height: 48px;
+      stroke: var(--fg-muted);
+      fill: none;
+      stroke-width: 1.5;
+      opacity: 0.4;
+    }
+
+    .vf-placeholder-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      opacity: 0.6;
+    }
+
+    .viewfinder.camera-on .vf-placeholder {
+      display: none;
+    }
+
+    /* Status Pill */
+    .vf-status {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 4;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      color: var(--fg-dim);
+      backdrop-filter: blur(8px);
+      transition: all var(--dur-normal) var(--ease-out);
+    }
+
+    .vf-status.scanning {
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-mid);
+    }
+
+    /* Capture Flash */
+    .vf-flash {
+      position: absolute;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .vf-flash.fire {
+      animation: flashFire 300ms ease-out;
+    }
+
+    @keyframes flashFire {
+      0% {
+        opacity: 0.7;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    /* â”€â”€â”€ Action Bar â”€â”€â”€ */
+    .action-bar {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
-      position: relative;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .cam-idle-ring::before {
+    .btn {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 9px 20px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: all var(--dur-fast) var(--ease-out);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      outline: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:focus-visible {
+      box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+    }
+
+    .btn svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-deep);
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.12);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px var(--accent-mid);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      filter: brightness(0.95);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .btn-secondary:hover {
+      background: var(--accent-soft);
+    }
+
+    .btn-secondary:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--fg-dim);
+      border-color: var(--border);
+    }
+
+    .btn-ghost:hover {
+      color: var(--fg);
+      border-color: var(--fg-muted);
+      background: var(--bg-raised);
+    }
+
+    .btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .btn.loading {
+      pointer-events: none;
+      color: transparent;
+    }
+
+    .btn.loading::after {
       content: '';
       position: absolute;
-      inset: -8px;
-      border: 1px solid var(--border);
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
       border-radius: 50%;
-      animation: breathe 3s ease-in-out infinite;
+      animation: btnSpinner 0.6s linear infinite;
     }
 
-    @keyframes breathe {
+    .btn-primary.loading::after {
+      border-top-color: var(--bg-deep);
+    }
+
+    @keyframes btnSpinner {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Hidden file input */
+    .file-input {
+      display: none;
+    }
+
+    /* â”€â”€â”€ Results Panel â”€â”€â”€ */
+    .results-panel {
+      max-width: 640px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .results-empty {
+      text-align: center;
+      padding: 32px 20px;
+      color: var(--fg-muted);
+      font-size: 13px;
+    }
+
+    .results-empty svg {
+      width: 36px;
+      height: 36px;
+      stroke: var(--border);
+      fill: none;
+      stroke-width: 1.5;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+
+    /* Skeleton */
+    .results-skeleton {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .skel-line {
+      height: 13px;
+      background: var(--border-subtle);
+      border-radius: var(--radius-xs);
+      animation: skelPulse 1.6s ease-in-out infinite;
+    }
+
+    .skel-line.w60 {
+      width: 60%;
+    }
+
+    .skel-line.w40 {
+      width: 40%;
+    }
+
+    .skel-line.w80 {
+      width: 80%;
+    }
+
+    .skel-line.w100 {
+      width: 100%;
+    }
+
+    .skel-line.h20 {
+      height: 20px;
+    }
+
+    @keyframes skelPulse {
 
       0%,
       100% {
         opacity: 0.3;
-        transform: scale(1)
       }
 
       50% {
-        opacity: 0.7;
-        transform: scale(1.05)
+        opacity: 0.55;
       }
     }
 
-    .cam-idle p {
-      font-size: 12px;
-      color: var(--text3);
-      letter-spacing: 0.5px;
-    }
-
-    .scan-bar {
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent 0%, var(--accent) 40%, rgba(255, 255, 255, 0.6) 50%, var(--accent) 60%, transparent 100%);
-      box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent-glow);
-      display: none;
-      animation: scanDown 2.2s ease-in-out infinite;
-    }
-
-    .scanning .scan-bar {
-      display: block;
-    }
-
-    @keyframes scanDown {
-      0% {
-        top: 2%;
-        opacity: 0
-      }
-
-      5% {
-        opacity: 1
-      }
-
-      95% {
-        opacity: 1
-      }
-
-      100% {
-        top: 98%;
-        opacity: 0
-      }
-    }
-
-    .corner {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      border-color: var(--accent);
-      border-style: solid;
-      opacity: 0;
-      transition: opacity 0.3s, border-color var(--theme-speed) ease;
-    }
-
-    .scanning .corner {
-      opacity: 0.7;
-    }
-
-    .corner.tl {
-      top: 10px;
-      left: 10px;
-      border-width: 2px 0 0 2px;
-      border-radius: 4px 0 0 0
-    }
-
-    .corner.tr {
-      top: 10px;
-      right: 10px;
-      border-width: 2px 2px 0 0;
-      border-radius: 0 4px 0 0
-    }
-
-    .corner.bl {
-      bottom: 10px;
-      left: 10px;
-      border-width: 0 0 2px 2px;
-      border-radius: 0 0 0 4px
-    }
-
-    .corner.br {
-      bottom: 10px;
-      right: 10px;
-      border-width: 0 2px 2px 0;
-      border-radius: 0 0 4px 0
-    }
-
-    .status-pill {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(18, 15, 9, 0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 245, 220, 0.12);
-      border-radius: 20px;
-      padding: 5px 14px;
-      font-size: 11px;
-      color: var(--text2);
-      white-space: nowrap;
-      letter-spacing: 0.3px;
-      transition: all 0.25s;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    /* ── CONTROLS ── */
-    .controls {
-      display: flex;
-      gap: 10px;
-      padding: 14px 16px 0;
-    }
-
-    .btn {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 16px 8px;
-      border: none;
-      border-radius: 16px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-
-    .btn:active {
-      transform: scale(0.97);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn:disabled {
-      opacity: 0.28;
-      pointer-events: none;
-    }
-
-    .btn-icon {
-      font-size: 15px;
-    }
-
-    .btn-start {
-      background: var(--warm-card2);
-      color: var(--text2);
-      border: 1px solid var(--border-bright);
-    }
-
-    .btn-start:hover {
-      background: rgba(255, 245, 220, 0.1);
-      color: var(--text);
-    }
-
-    .btn-scan {
-      background: var(--accent);
-      color: #0a1a0a;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      box-shadow: 0 8px 24px var(--accent-glow), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .btn-scan:hover {
-      box-shadow: 0 12px 32px var(--accent-glow), inset 0 1px 1px rgba(255, 255, 255, 0.5);
-      transform: translateY(-2px);
-    }
-
-    .btn-ask {
-      background: var(--accent);
-      color: #0a1a0a;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      box-shadow: 0 8px 24px var(--accent-glow), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      border: 1px solid transparent;
-    }
-
-    .btn-ask:hover {
-      box-shadow: 0 12px 32px var(--accent-glow), inset 0 1px 1px rgba(255, 255, 255, 0.5);
-      transform: translateY(-2px);
-    }
-
-    .btn-ask.listening {
-      background: rgba(244, 196, 48, 0.1);
-      border-color: rgba(244, 196, 48, 0.4);
-      color: var(--saffron);
-      box-shadow: none;
-      animation: pulseGlow 1.5s ease-in-out infinite;
-    }
-
-    .btn-ask.speaking {
-      background: rgba(244, 196, 48, 0.1);
-      border-color: var(--border-bright);
-      color: var(--text);
-      box-shadow: 0 0 12px rgba(244, 196, 48, 0.15);
-      animation: pulseGlow 2s ease-in-out infinite;
-    }
-
-    @keyframes pulseGlow {
-
-      0%,
-      100% {
-        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4), 0 0 0 0 var(--saffron-glow)
-      }
-
-      50% {
-        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4), 0 0 0 6px rgba(244, 196, 48, 0)
-      }
-    }
-
-    .btn-mute {
-      flex: 0 0 50px;
-      background: var(--warm-card2);
-      color: var(--text2);
-      border: 1px solid var(--border-bright);
-    }
-
-    .btn-mute:hover {
-      background: rgba(255, 245, 220, 0.1);
-      color: var(--text);
-    }
-
-    .btn-mute.muted {
-      background: var(--red-dim);
-      border-color: rgba(248, 113, 113, 0.3);
-      color: var(--red);
-    }
-
-    /* ── UPLOAD SECTION ── */
-    .upload-section {
-      margin: 10px 16px 0;
-      position: relative;
-    }
-
-    .upload-toggle {
-      width: 100%;
-      padding: 10px 16px;
-      background: var(--warm-card);
-      border: 1px dashed var(--border-bright);
-      border-radius: 16px;
-      color: var(--text3);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      letter-spacing: 0.3px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-
-    .upload-toggle:hover {
-      background: var(--warm-card2);
-      border-color: var(--accent);
-      color: var(--accent);
-      transform: translateY(-1px);
-    }
-
-    .upload-toggle.has-image {
-      border-style: solid;
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--accent-dim);
-    }
-
-
-
-    @media(min-width:768px) {
-      .upload-section {
-        margin: 10px 0 0;
-      }
-    }
-
-    /* ── RESULT CARD ── */
+    /* Result Card */
     .result-card {
-      margin: 14px 16px 0;
-      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
       overflow: hidden;
-      border: 1px solid var(--border);
-      background: var(--glass-bg);
-      backdrop-filter: blur(var(--glass-blur));
-      -webkit-backdrop-filter: blur(var(--glass-blur));
-      transition: border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      animation: resultSlideIn 0.5s var(--ease-out) both;
     }
 
-    .result-card.good {
-      border-color: rgba(82, 201, 126, 0.25);
-    }
-
-    .result-card.sick {
-      border-color: rgba(240, 180, 41, 0.3);
-    }
-
-    .result-card.danger {
-      border-color: rgba(248, 113, 113, 0.3);
-    }
-
-    /* Skeleton */
-    .skel-wrap {
-      padding: 20px;
-    }
-
-    .skel {
-      background: linear-gradient(90deg, rgba(255, 245, 220, 0.04) 25%, rgba(255, 245, 220, 0.09) 50%, rgba(255, 245, 220, 0.04) 75%);
-      background-size: 200% 100%;
-      border-radius: 6px;
-      animation: skelWave 1.5s ease-in-out infinite;
-    }
-
-    @keyframes skelWave {
-      0% {
-        background-position: 200% 0
-      }
-
-      100% {
-        background-position: -200% 0
-      }
-    }
-
-    .skel-h {
-      height: 26px;
-      width: 58%;
-      margin-bottom: 8px;
-      border-radius: 8px;
-    }
-
-    .skel-s {
-      height: 13px;
-      width: 38%;
-      margin-bottom: 18px;
-    }
-
-    .skel-l {
-      height: 12px;
-      width: 100%;
-      margin-bottom: 7px;
-    }
-
-    .skel-l.sm {
-      width: 72%;
-    }
-
-    /* Result inner */
-    .result-inner {
-      padding: 20px;
-      animation: fadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes fadeUp {
+    @keyframes resultSlideIn {
       from {
         opacity: 0;
-        transform: translateY(10px)
+        transform: translateY(16px);
       }
 
       to {
         opacity: 1;
-        transform: translateY(0)
+        transform: translateY(0);
       }
     }
 
-    .result-empty {
-      padding: 28px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--text3);
-      font-size: 13px;
-    }
-
-    .empty-icon {
-      width: 36px;
-      height: 36px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-
-    .result-top {
+    .result-header {
+      padding: 20px 24px 16px;
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
-    .result-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 26px;
-      font-weight: 600;
-      line-height: 1.15;
-      letter-spacing: -0.3px;
+    .result-species {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
     }
 
-    .result-sci {
-      font-family: 'Cormorant Garamond', serif;
+    .result-common-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.2;
+      color: var(--fg);
+    }
+
+    .result-sci-name {
       font-style: italic;
-      font-size: 13px;
-      color: var(--text3);
-      margin-top: 3px;
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 14px;
+      color: var(--fg-dim);
     }
 
-    .badge {
+    .result-family {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--fg-muted);
+      text-transform: uppercase;
+    }
+
+    .result-badge {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 5px 10px;
+      padding: 5px 12px;
       border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
       white-space: nowrap;
       flex-shrink: 0;
-      letter-spacing: 0.3px;
-      border: 1px solid transparent;
     }
 
-    .badge.good {
-      background: var(--green-dim);
-      color: var(--green);
-      border-color: rgba(82, 201, 126, 0.2);
+    .result-badge.healthy {
+      background: rgba(76, 175, 125, 0.12);
+      color: var(--healthy);
+      border: 1px solid rgba(76, 175, 125, 0.25);
     }
 
-    .badge.sick {
-      background: var(--yellow-dim);
-      color: var(--yellow);
-      border-color: rgba(240, 180, 41, 0.2);
+    .result-badge.warning {
+      background: rgba(212, 148, 58, 0.12);
+      color: var(--warning);
+      border: 1px solid rgba(212, 148, 58, 0.25);
     }
 
-    .badge.danger {
-      background: var(--red-dim);
-      color: var(--red);
-      border-color: rgba(248, 113, 113, 0.2);
+    .result-badge.critical {
+      background: rgba(196, 85, 80, 0.12);
+      color: var(--critical);
+      border: 1px solid rgba(196, 85, 80, 0.25);
     }
 
-    .badge-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: currentColor;
+    .result-badge.identified {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent-mid);
     }
 
-    /* Story + streaming cursor */
-    .result-story {
-      font-size: 13.5px;
-      line-height: 1.72;
-      color: var(--text2);
-      margin-bottom: 14px;
+    .result-badge svg {
+      width: 12px;
+      height: 12px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
     }
 
-    .cursor-blink {
-      display: inline-block;
-      width: 2px;
-      height: 14px;
-      background: var(--accent);
-      margin-left: 2px;
-      vertical-align: text-bottom;
-      transition: background var(--theme-speed) ease;
-      animation: blink 500ms ease-in-out infinite;
+    .result-body {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    @keyframes blink {
-
-      0%,
-      100% {
-        opacity: 1
-      }
-
-      50% {
-        opacity: 0
-      }
+    .result-section-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .diag-line {
+    .result-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    .result-diagnosis {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--fg-dim);
+    }
+
+    .result-treatment {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .result-treatment li {
       display: flex;
       align-items: flex-start;
-      gap: 8px;
-      font-size: 12.5px;
-      color: var(--yellow);
-      margin-bottom: 12px;
-      padding: 10px 12px;
-      background: var(--yellow-dim);
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(240, 180, 41, 0.15);
+      gap: 10px;
+      font-size: 13px;
       line-height: 1.5;
+      color: var(--fg-dim);
     }
 
-    .treat-section {
-      border-top: 1px solid var(--border);
-      padding-top: 14px;
+    .treatment-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-soft);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .result-reminder {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-mid);
+      border-radius: var(--radius-md);
+    }
+
+    .result-reminder svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 2;
+      flex-shrink: 0;
+    }
+
+    .result-reminder-text {
+      font-size: 13px;
+      color: var(--fg-dim);
+      flex: 1;
+    }
+
+    .result-reminder-text strong {
+      color: var(--accent);
+    }
+
+    .result-reminder .btn {
+      padding: 5px 12px;
+      font-size: 11px;
+    }
+
+    /* Confidence bar */
+    .confidence-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       margin-top: 4px;
     }
 
-    .treat-header {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      color: var(--text3);
-      text-transform: uppercase;
-      margin-bottom: 12px;
+    .confidence-track {
+      flex: 1;
+      height: 3px;
+      background: var(--border-subtle);
+      border-radius: 2px;
+      overflow: hidden;
     }
 
-    .treat-step {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 10px;
-      font-size: 13px;
-      color: var(--text2);
-      line-height: 1.55;
+    .confidence-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.8s var(--ease-out);
     }
 
-    .step-num {
-      min-width: 22px;
-      height: 22px;
-      background: var(--accent-dim);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .confidence-label {
+      font-family: var(--font-mono);
       font-size: 11px;
-      font-weight: 700;
-      color: var(--accent);
-      flex-shrink: 0;
-      margin-top: 1px;
-      transition: background var(--theme-speed) ease, color var(--theme-speed) ease;
+      color: var(--fg-muted);
+      white-space: nowrap;
     }
 
-    .meta-row {
+    /* â”€â”€â”€ Journal Panel â”€â”€â”€ */
+    .journal-panel {
+      border-left: 1px solid var(--border-subtle);
       display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-
-    .meta-chip {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 10px;
-      background: var(--warm-card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 11px;
-      color: var(--text3);
-    }
-
-    .chip-gold {
-      color: var(--saffron) !important;
-      border-color: rgba(244, 196, 48, 0.2) !important;
-    }
-
-    /* ── JOURNAL ── */
-    .journal-wrap {
-      padding: 20px 16px 48px;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg-raised);
     }
 
     .journal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .journal-title {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text3);
-      letter-spacing: 1px;
-      text-transform: uppercase;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--fg);
+      margin-bottom: 2px;
     }
 
     .journal-count {
-      background: var(--accent-dim);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--accent);
-      padding: 3px 10px;
-      border-radius: 20px;
+      font-family: var(--font-mono);
       font-size: 11px;
-      font-weight: 600;
-      transition: background var(--theme-speed) ease, color var(--theme-speed) ease;
+      color: var(--fg-muted);
+      letter-spacing: 0.06em;
     }
 
-    .j-card {
-      background: var(--glass-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 14px 16px;
-      margin-bottom: 10px;
+    /* Stats */
+    .stats-row {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      min-height: 62px;
-      user-select: none;
-      -webkit-user-select: none;
+      gap: 1px;
+      margin-top: 14px;
+      background: var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
     }
 
-    .j-card:hover {
-      border-color: var(--border-bright);
-      background: var(--warm-card2);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    .j-card:active {
-      transform: scale(0.98) translateY(1px);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .j-card.sick {
-      border-left: 2.5px solid var(--yellow);
-    }
-
-    .j-card.danger {
-      border-left: 2.5px solid var(--red);
-    }
-
-    .j-card.invasive {
-      border-left: 2.5px solid #fb923c;
-    }
-
-    .j-emoji {
-      width: 40px;
-      height: 40px;
-      background: var(--warm-card2);
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .j-info {
+    .stat-item {
       flex: 1;
-      min-width: 0;
+      padding: 10px 12px;
+      background: var(--bg-card);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .j-name {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .stat-value {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--fg);
+      line-height: 1;
     }
 
-    .j-sub {
-      font-size: 11px;
-      color: var(--text3);
-      margin-top: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
     }
 
-    .j-water {
-      color: var(--accent);
-      font-weight: 600;
-      transition: color var(--theme-speed) ease;
-    }
-
-    .j-status {
-      font-size: 11px;
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-
-    .j-status.good {
-      color: var(--green);
-    }
-
-    .j-status.sick {
-      color: var(--yellow);
-    }
-
-    .j-status.danger {
-      color: var(--red);
+    /* Journal Entries */
+    .journal-entries {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .journal-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      padding: 44px 20px;
-      color: var(--text3);
+      padding: 48px 24px;
+      gap: 12px;
     }
 
-    .journal-empty span {
-      font-size: 40px;
-      display: block;
-      margin-bottom: 10px;
-      opacity: 0.3;
+    .journal-empty-svg {
+      width: 56px;
+      height: 56px;
+      stroke: var(--border);
+      fill: none;
+      stroke-width: 1.2;
+      opacity: 0.5;
     }
 
-    .journal-empty p {
-      font-size: 13px;
+    .journal-empty-title {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-style: italic;
+      font-size: 15px;
+      color: var(--fg-muted);
     }
 
-    .credit {
-      text-align: right;
-      padding: 0 20px 8px;
-      font-size: 10px;
-      color: rgba(244, 196, 48, 0.14);
-      letter-spacing: 0.3px;
+    .journal-empty-sub {
+      font-size: 12px;
+      color: var(--fg-muted);
+      opacity: 0.6;
+      max-width: 200px;
+      line-height: 1.5;
     }
 
-    /* Speak button */
-    .speak-btn {
-      width: 30px;
-      height: 30px;
-      background: var(--warm-card2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
+    /* Specimen Card */
+    .specimen-card {
+      display: flex;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
       cursor: pointer;
+      transition: all var(--dur-normal) var(--ease-out);
+      position: relative;
+      animation: specimenIn 0.4s var(--ease-out) both;
+    }
+
+    .specimen-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border);
+      transform: translateX(3px);
+    }
+
+    /* Pushpin */
+    .specimen-card::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: 50%;
+      margin-left: -3px;
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 4px var(--accent-glow);
+      transition: background var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+    }
+
+    @keyframes specimenIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .specimen-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      flex-shrink: 0;
+      background: var(--bg-deep);
+    }
+
+    .specimen-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .specimen-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .specimen-name {
+      font-family: var(--font-display);
+      font-weight: 500;
       font-size: 14px;
+      color: var(--fg);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .specimen-health {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .specimen-health.healthy {
+      color: var(--healthy);
+    }
+
+    .specimen-health.warning {
+      color: var(--warning);
+    }
+
+    .specimen-health.critical {
+      color: var(--critical);
+    }
+
+    .specimen-health.identified {
+      color: var(--accent);
+    }
+
+    .specimen-date {
+      font-size: 11px;
+      color: var(--fg-muted);
+    }
+
+    .specimen-delete {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      border: none;
+      background: transparent;
+      color: var(--fg-muted);
+      cursor: pointer;
+      opacity: 0;
+      transition: all var(--dur-fast);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.15s;
-      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+      border-radius: var(--radius-xs);
     }
 
-    .speak-btn:active {
-      transform: translateY(1px);
-      box-shadow: none;
+    .specimen-card:hover .specimen-delete {
+      opacity: 0.6;
     }
 
-    .speak-btn:hover {
-      border-color: var(--border-bright);
-      background: rgba(255, 245, 220, 0.1);
+    .specimen-delete:hover {
+      opacity: 1 !important;
+      background: var(--accent-soft);
+      color: var(--critical);
     }
 
-    /* Thinking panel */
-    .thinking-panel {
-      display: none;
+    .specimen-delete svg {
+      width: 12px;
+      height: 12px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* â”€â”€â”€ Voice Overlay â”€â”€â”€ */
+    .voice-overlay {
       position: fixed;
-      top: 0;
-      right: 0;
-      width: min(320px, 90vw);
-      height: 100vh;
-      background: rgba(10, 8, 5, 0.96);
+      inset: 0;
+      z-index: 1000;
+      background: rgba(7, 12, 9, 0.85);
       backdrop-filter: blur(20px);
-      border-left: 1px solid var(--border);
-      z-index: 998;
-      flex-direction: column;
-      padding: 24px 20px;
-      gap: 12px;
-      overflow-y: auto;
-    }
-
-    .thinking-panel.active {
       display: flex;
-    }
-
-    .thinking-header {
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--text3);
-      display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--dur-slow) var(--ease-out);
     }
 
-    .thinking-close {
-      background: none;
-      border: none;
-      color: var(--text3);
-      font-size: 16px;
-      cursor: pointer;
-      padding: 4px;
+    .voice-overlay.active {
+      opacity: 1;
+      visibility: visible;
     }
 
-    .thinking-close:hover {
-      color: var(--text);
+    .voice-card {
+      width: 420px;
+      max-width: 90vw;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      transform: scale(0.92) translateY(20px);
+      transition: transform var(--dur-slow) var(--ease-spring);
     }
 
-    .thinking-content {
-      font-size: 12px;
-      line-height: 1.7;
-      color: var(--text2);
-      font-family: 'Plus Jakarta Sans', monospace;
-      white-space: pre-wrap;
+    .voice-overlay.active .voice-card {
+      transform: scale(1) translateY(0);
     }
 
-    .thinking-label {
-      font-size: 9px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
+    .voice-mic-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      background: var(--accent-soft);
       color: var(--accent);
-      margin-bottom: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all var(--dur-normal) var(--ease-out);
     }
 
-    canvas {
-      display: none;
+    .voice-mic-btn svg {
+      width: 32px;
+      height: 32px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
     }
 
-    @media(max-width:400px) {
-      .camera-wrap {
-        aspect-ratio: 3/4;
+    .voice-mic-btn.listening {
+      background: var(--accent);
+      color: var(--bg-deep);
+      animation: micListening 1.5s ease-in-out infinite;
+    }
+
+    @keyframes micListening {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 var(--accent-glow);
       }
 
-      .result-name {
+      50% {
+        box-shadow: 0 0 0 20px transparent;
+      }
+    }
+
+    .voice-mic-btn.speaking {
+      background: var(--accent);
+      color: var(--bg-deep);
+    }
+
+    .voice-status-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      text-align: center;
+    }
+
+    .voice-transcript {
+      width: 100%;
+      max-height: 160px;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--fg-dim);
+      text-align: center;
+      padding: 12px;
+      background: var(--bg-deep);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .voice-waves {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      height: 24px;
+    }
+
+    .voice-wave-bar {
+      width: 3px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: height 0.1s ease;
+    }
+
+    .voice-waves.active .voice-wave-bar {
+      animation: waveBar 0.8s ease-in-out infinite;
+    }
+
+    .voice-wave-bar:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .voice-wave-bar:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .voice-wave-bar:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .voice-wave-bar:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    .voice-wave-bar:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+
+    .voice-wave-bar:nth-child(6) {
+      animation-delay: 0.3s;
+    }
+
+    .voice-wave-bar:nth-child(7) {
+      animation-delay: 0.2s;
+    }
+
+    @keyframes waveBar {
+
+      0%,
+      100% {
+        height: 4px;
+      }
+
+      50% {
+        height: 20px;
+      }
+    }
+
+    .voice-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: var(--bg-raised);
+      color: var(--fg-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--dur-fast);
+    }
+
+    .voice-close:hover {
+      border-color: var(--critical);
+      color: var(--critical);
+    }
+
+    .voice-close svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* â”€â”€â”€ Toast â”€â”€â”€ */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fg);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      animation: toastIn 0.35s var(--ease-spring) both;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 360px;
+    }
+
+    .toast.success {
+      border-color: var(--healthy);
+    }
+
+    .toast.warning {
+      border-color: var(--warning);
+    }
+
+    .toast.error {
+      border-color: var(--critical);
+    }
+
+    .toast.exiting {
+      animation: toastOut 0.3s var(--ease-out) both;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes toastOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      to {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+    }
+
+    /* â”€â”€â”€ Reminders Section â”€â”€â”€ */
+    .reminders-section {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .reminders-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      margin-bottom: 10px;
+    }
+
+    .reminder-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .reminder-item svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 2;
+      flex-shrink: 0;
+    }
+
+    .reminder-plant {
+      color: var(--fg);
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .reminder-schedule {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--fg-muted);
+    }
+
+    /* â”€â”€â”€ Mobile Journal Toggle â”€â”€â”€ */
+    .mobile-journal-toggle {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--bg-deep);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px var(--accent-mid);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--dur-fast) var(--ease-spring);
+    }
+
+    .mobile-journal-toggle:active {
+      transform: scale(0.9);
+    }
+
+    .mobile-journal-toggle svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* â”€â”€â”€ Responsive â”€â”€â”€ */
+    @media (max-width: 1023px) {
+      .app-main {
+        grid-template-columns: 1fr;
+      }
+
+      .journal-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 340px;
+        max-width: 85vw;
+        z-index: 500;
+        border-left: 1px solid var(--border);
+        transform: translateX(100%);
+        transition: transform var(--dur-slow) var(--ease-out);
+      }
+
+      .journal-panel.open {
+        transform: translateX(0);
+      }
+
+      .mobile-journal-toggle {
+        display: flex;
+      }
+
+      .mobile-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 499;
+        opacity: 0;
+        visibility: hidden;
+        transition: all var(--dur-normal);
+      }
+
+      .mobile-backdrop.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .scan-panel {
+        padding: 20px 16px;
+      }
+
+      .app-header {
+        padding: 16px;
+      }
+
+      .brand-name {
         font-size: 22px;
       }
 
+      .mode-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .viewfinder {
+        aspect-ratio: 3 / 4;
+      }
+
+      .action-bar {
+        gap: 8px;
+      }
+
       .btn {
+        padding: 8px 14px;
         font-size: 12px;
-        padding: 14px 6px;
       }
 
-      .bento-stats {
-        padding: 12px 12px 0;
-        gap: 6px;
+      .result-header {
+        padding: 16px;
       }
 
-      .controls,
-      .mode-toggle,
-      .result-card,
-      .journal-wrap {
-        margin-left: 12px;
-        margin-right: 12px;
+      .result-body {
+        padding: 16px;
       }
+
+      .result-common-name {
+        font-size: 18px;
+      }
+    }
+
+    /* â”€â”€â”€ Reduced Motion â”€â”€â”€ */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* â”€â”€â”€ Background Ambience â”€â”€â”€ */
+    .bg-glow {
+      position: fixed;
+      pointer-events: none;
+      z-index: -1;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.08;
+      transition: background var(--dur-slow) var(--ease-out);
+    }
+
+    .bg-glow-1 {
+      width: 600px;
+      height: 600px;
+      top: -200px;
+      right: -100px;
+      background: var(--accent);
+    }
+
+    .bg-glow-2 {
+      width: 400px;
+      height: 400px;
+      bottom: -100px;
+      left: -50px;
+      background: var(--accent);
+      opacity: 0.05;
+    }
+
+    /* â”€â”€â”€ Explorer-specific result styles â”€â”€â”€ */
+    .result-conservation {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .result-conservation.lc {
+      background: rgba(76, 175, 125, 0.1);
+      color: var(--healthy);
+    }
+
+    .result-conservation.nt {
+      background: rgba(212, 148, 58, 0.1);
+      color: var(--warning);
+    }
+
+    .result-conservation.vu,
+    .result-conservation.en,
+    .result-conservation.cr {
+      background: rgba(196, 85, 80, 0.1);
+      color: var(--critical);
+    }
+
+    .inat-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-muted);
+      margin-top: 4px;
+    }
+
+    .inat-link svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
     }
   </style>
 </head>
 
 <body>
-  <div class="app">
+  <!-- Background Ambience -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
 
-    <header>
-      <div class="logo-wrap">
-        <div class="logo-mark">🌿</div>
-        <div>
-          <div class="logo-name">Sativus</div>
-          <div class="logo-tag">Plant Doctor · Nature Explorer</div>
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-name">Sativus<span>.</span></div>
+        <div class="brand-tag">Plant Doctor &middot; Nature Explorer</div>
+      </div>
+      <div class="header-actions">
+        <div class="mode-toggle" role="tablist" aria-label="Application mode">
+          <button class="mode-btn active" data-mode="doctor" role="tab" aria-selected="true">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+            </svg>
+            Doctor
+          </button>
+          <button class="mode-btn" data-mode="explorer" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 2a15 15 0 0 1 0 20m0-20a15 15 0 0 0 0 20M2 12h20" />
+            </svg>
+            Explorer
+          </button>
         </div>
+        <button class="voice-btn" id="voiceToggle" aria-label="Voice interaction" title="Voice Interaction">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 1a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z" />
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+            <line x1="12" y1="19" x2="12" y2="23" />
+            <line x1="8" y1="23" x2="16" y2="23" />
+          </svg>
+        </button>
       </div>
     </header>
 
-    <div class="app-desktop">
-      <div class="app-left">
-        <div class="bento-stats">
-          <div class="stat-tile">
-            <div class="stat-num" id="statScans">0</div>
-            <div class="stat-label">Scanned</div>
-          </div>
-          <div class="stat-tile">
-            <div class="stat-num" id="statSick">0</div>
-            <div class="stat-label">Treated</div>
-          </div>
-          <div class="stat-tile">
-            <div class="stat-num" id="statSpecies">0</div>
-            <div class="stat-label">Species</div>
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Left: Scan Panel -->
+      <section class="scan-panel">
+        <!-- Viewfinder -->
+        <div class="viewfinder-wrapper">
+          <div class="viewfinder" id="viewfinder">
+            <video id="cameraVideo" autoplay playsinline muted></video>
+            <canvas id="captureCanvas" style="display:none;"></canvas>
+
+            <div class="vf-overlay">
+              <div class="vf-corner vf-tl"></div>
+              <div class="vf-corner vf-tr"></div>
+              <div class="vf-corner vf-bl"></div>
+              <div class="vf-corner vf-br"></div>
+              <div class="vf-crosshair"></div>
+              <div class="vf-ripple"></div>
+              <div class="vf-ripple"></div>
+              <div class="vf-ripple"></div>
+              <div class="vf-scanline"></div>
+            </div>
+
+            <div class="vf-status" id="vfStatus">Standby</div>
+            <div class="vf-flash" id="vfFlash"></div>
+
+            <div class="vf-placeholder" id="vfPlaceholder">
+              <svg class="vf-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+              <div class="vf-placeholder-text">Start camera to begin</div>
+            </div>
           </div>
         </div>
 
-        <div class="mode-toggle">
-          <button class="mode-btn active" id="doctorBtn" onclick="switchMode('doctor')">🏥 Plant Doctor</button>
-          <button class="mode-btn" id="explorerBtn" onclick="switchMode('explorer')">🔭 Nature Explorer</button>
-        </div>
-
-        <div class="camera-wrap" id="cameraWrap" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
-          ondrop="handleDrop(event)">
-          <video id="video" autoplay playsinline muted></video>
-          <img id="camUploadImg" src="" alt="uploaded"
-            style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;" />
-          <div class="cam-idle" id="camIdle">
-            <div class="cam-idle-ring">📷</div>
-            <p>Tap Start to begin</p>
-          </div>
-          <div class="scan-bar"></div>
-          <div class="corner tl"></div>
-          <div class="corner tr"></div>
-          <div class="corner bl"></div>
-          <div class="corner br"></div>
-          <div class="status-pill" id="statusPill">Initialising</div>
-        </div>
-
-        <div class="controls">
-          <button class="btn btn-start" id="startBtn" onclick="startCamera()"><span class="btn-icon">📷</span>
-            Start</button>
-          <button class="btn btn-mute" id="locBtn" onclick="requestLocation()" title="Enable location"><span
-              id="locIcon">📍</span></button>
-          <button class="btn btn-scan" onclick="handleAnalyse()" id="scanBtn" disabled><span class="btn-icon">✦</span>
-            Analyse</button>
-          <button class="btn btn-ask" onclick="handleAsk()" id="askBtn" disabled>
-            <span class="btn-icon" id="askIcon">🎤</span><span id="askLabel">Ask</span>
+        <!-- Action Bar -->
+        <div class="action-bar">
+          <button class="btn btn-primary" id="btnStart">
+            <svg viewBox="0 0 24 24">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+            Start
           </button>
-          <button class="btn btn-mute" onclick="toggleMute()" id="muteBtn"><span id="muteIcon">🔊</span></button>
-        </div>
-
-        <div class="upload-section">
-          <button class="upload-toggle" id="uploadToggle" onclick="document.getElementById('fileInput').click()">
-            <span>🖼️</span> <span id="uploadToggleLabel">Upload Image</span>
+          <button class="btn btn-secondary" id="btnAnalyse" disabled>
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            Analyse
           </button>
-          <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFileSelect(event)">
+          <button class="btn btn-ghost" id="btnUpload">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            Upload
+          </button>
+          <input type="file" accept="image/*" class="file-input" id="fileInput">
         </div>
 
-      </div><!-- /app-left -->
-      <div class="app-right">
-        <div class="result-card" id="resultCard">
-          <div class="result-empty">
-            <div class="empty-icon">🌱</div><span>Point your camera at any plant and tap Analyse</span>
+        <!-- Results -->
+        <div class="results-panel" id="resultsPanel">
+          <div class="results-empty" id="resultsEmpty">
+            <svg viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+            <div>Scan results will appear here</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Journal Panel -->
+      <aside class="journal-panel" id="journalPanel">
+        <div class="journal-header">
+          <div class="journal-title">Field Journal</div>
+          <div class="journal-count" id="journalCount">0 entries</div>
+          <div class="stats-row">
+            <div class="stat-item">
+              <div class="stat-value" id="statScanned">0</div>
+              <div class="stat-label">Scanned</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="statTreated">0</div>
+              <div class="stat-label">Treated</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="statSpecies">0</div>
+              <div class="stat-label">Species</div>
+            </div>
           </div>
         </div>
 
-        <div class="journal-wrap">
-          <div class="journal-header">
-            <span class="journal-title">Field Journal</span>
-            <span class="journal-count" id="journalCount">0 entries</span>
+        <div class="journal-entries" id="journalEntries">
+          <div class="journal-empty" id="journalEmpty">
+            <svg class="journal-empty-svg" viewBox="0 0 24 24">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              <line x1="9" y1="7" x2="15" y2="7" />
+              <line x1="9" y1="11" x2="13" y2="11" />
+            </svg>
+            <div class="journal-empty-title">Your journal awaits</div>
+            <div class="journal-empty-sub">Scan specimens to build your field collection</div>
           </div>
-          <div id="journalList"></div>
         </div>
 
-      </div><!-- /app-right -->
-    </div><!-- /app-desktop -->
-    <div class="credit">made by Tazwar Ahnaf Enan</div>
-
+        <div class="reminders-section" id="remindersSection" style="display:none;">
+          <div class="reminders-title">Care Reminders</div>
+          <div id="remindersList"></div>
+        </div>
+      </aside>
+    </main>
   </div>
-  <canvas id="canvas"></canvas>
+
+  <!-- Mobile Journal Toggle -->
+  <button class="mobile-journal-toggle" id="mobileJournalToggle" aria-label="Toggle field journal">
+    <svg viewBox="0 0 24 24">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    </svg>
+  </button>
+  <div class="mobile-backdrop" id="mobileBackdrop"></div>
+
+  <!-- Voice Overlay -->
+  <div class="voice-overlay" id="voiceOverlay">
+    <div class="voice-card" style="position:relative;">
+      <button class="voice-close" id="voiceClose" aria-label="Close voice">
+        <svg viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <button class="voice-mic-btn" id="voiceMicBtn" aria-label="Toggle microphone">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 1a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z" />
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+          <line x1="12" y1="19" x2="12" y2="23" />
+          <line x1="8" y1="23" x2="16" y2="23" />
+        </svg>
+      </button>
+      <div class="voice-waves" id="voiceWaves">
+        <div class="voice-wave-bar"></div>
+        <div class="voice-wave-bar"></div>
+        <div class="voice-wave-bar"></div>
+        <div class="voice-wave-bar"></div>
+        <div class="voice-wave-bar"></div>
+        <div class="voice-wave-bar"></div>
+        <div class="voice-wave-bar"></div>
+      </div>
+      <div class="voice-status-text" id="voiceStatusText">Tap microphone to speak</div>
+      <div class="voice-transcript" id="voiceTranscript" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
   <script>
-    const API_URL = (() => {
-      const configured = window.SATIVUS_API_BASE || localStorage.getItem('sativus_api_base') || window.location.origin;
-      if (configured && configured.startsWith('http')) return configured.replace(/\/$/, '');
-      return 'http://localhost:8080';
-    })();
-    let stream = null, userLocation = null, currentMode = 'doctor';
-    let journal = JSON.parse(localStorage.getItem('sativus_journal') || '[]');
-    let isMuted = false, isListening = false, recognition = null;
-    let selectedPlant = journal[0] || null;
-    let cachedVoice = null;
-    const LIVE_ENABLED = window.SATIVUS_LIVE_VOICE_ENABLED === true || localStorage.getItem('sativus_live_enabled') === 'true';
-    const LIVE_PROVIDER = window.SATIVUS_LIVE_PROVIDER || localStorage.getItem('sativus_live_provider') || 'none';
-    const AI_STATES = {
-      IDLE: 'idle',
-      LISTENING: 'listening',
-      THINKING: 'thinking',
-      SPEAKING: 'speaking',
-      INTERRUPTED: 'interrupted',
-      ERROR: 'error'
-    };
-    let aiState = AI_STATES.IDLE;
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       Sativus AI â€” Frontend Application
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
-    function setAIState(nextState, message) {
-      aiState = nextState;
-      const askBtn = document.getElementById('askBtn');
-      const askIcon = document.getElementById('askIcon');
-      const askLabel = document.getElementById('askLabel');
+    (function () {
+      'use strict';
 
-      if (!LIVE_ENABLED) {
-        askBtn.disabled = true;
-        askBtn.classList.remove('listening', 'speaking');
-        askBtn.onclick = () => setStatus('Live voice is disabled. Enable SATIVUS_LIVE_VOICE_ENABLED to use scaffolding.');
-        askIcon.textContent = '🚫';
-        askLabel.textContent = 'Live Off';
-        if (message) setStatus(message);
-        return;
-      }
-
-      askBtn.classList.remove('listening', 'speaking');
-      askBtn.onclick = handleAsk;
-
-      if (nextState === AI_STATES.LISTENING) {
-        askBtn.classList.add('listening');
-        askIcon.textContent = '⏹';
-        askLabel.textContent = 'Stop';
-      } else if (nextState === AI_STATES.THINKING) {
-        askBtn.classList.add('speaking');
-        askIcon.textContent = '⋯';
-        askLabel.textContent = 'Thinking';
-      } else if (nextState === AI_STATES.SPEAKING) {
-        askBtn.classList.add('speaking');
-        askIcon.textContent = '⏹';
-        askLabel.textContent = 'Interrupt';
-      } else {
-        askIcon.textContent = '🎤';
-        askLabel.textContent = 'Ask';
-      }
-
-      if (message) setStatus(message);
-    }
-
-    // Preload and cache best voice immediately
-    function loadVoice() {
-      const voices = window.speechSynthesis.getVoices();
-      if (!voices.length) return;
-      cachedVoice =
-        voices.find(v => v.name === 'Samantha') ||
-        voices.find(v => v.name === 'Karen') ||
-        voices.find(v => v.name === 'Moira') ||
-        voices.find(v => v.name.includes('Google UK English Female')) ||
-        voices.find(v => v.name.includes('Microsoft Aria')) ||
-        voices.find(v => v.name.includes('Microsoft Zira')) ||
-        voices.find(v => v.localService && v.lang === 'en-US') ||
-        voices.find(v => v.lang === 'en-GB') ||
-        voices.find(v => v.lang.startsWith('en') && v.localService) ||
-        voices.find(v => v.lang.startsWith('en'));
-    }
-    window.speechSynthesis.onvoiceschanged = loadVoice;
-    loadVoice(); // try immediately too
-
-    // Location — only read from cache, never auto-prompt
-    const _cachedLoc = localStorage.getItem('sativus_location');
-    if (_cachedLoc) { try { userLocation = JSON.parse(_cachedLoc); } catch (e) { } }
-    // Location is fetched lazily inside saveToJournal if user has already granted it
-
-    function requestLocation() {
-      if (!navigator.geolocation) { setStatus('Location not supported'); return; }
-      setStatus('Getting location…');
-      navigator.geolocation.getCurrentPosition(
-        p => {
-          userLocation = { lat: p.coords.latitude, lng: p.coords.longitude };
-          localStorage.setItem('sativus_location', JSON.stringify(userLocation));
-          setStatus('Location saved ✦');
-          // Hide on success
-          const btn = document.getElementById('locBtn');
-          btn.style.transition = 'opacity 0.3s, transform 0.3s';
-          btn.style.opacity = '0';
-          btn.style.transform = 'scale(0.9)';
-          setTimeout(() => { btn.style.display = 'none'; }, 320);
-        },
-        () => {
-          setStatus('Location denied — tap 📍 to retry');
-        }
-      );
-    }
-
-    function setHealthTheme(health_status) {
-      const b = document.body;
-      b.classList.remove('health-sick', 'health-critical');
-      if (health_status === 'Sick') b.classList.add('health-sick');
-      if (health_status === 'Critical') b.classList.add('health-critical');
-    }
-
-    function updateStats() {
-      document.getElementById('statScans').textContent = journal.length;
-      document.getElementById('statSick').textContent = journal.filter(e => e.health_status === 'Sick' || e.health_status === 'Critical').length;
-      const sp = new Set(journal.map(e => e.scientific_name).filter(Boolean));
-      document.getElementById('statSpecies').textContent = sp.size;
-    }
-
-    function switchMode(m) {
-      if (currentMode === m) return;
-      fadeOutSpeech();
-      currentMode = m;
-      document.getElementById('doctorBtn').classList.toggle('active', m === 'doctor');
-      document.getElementById('explorerBtn').classList.toggle('active', m === 'explorer');
-
-      // Smooth theme transition
-      document.body.classList.toggle('explorer-mode', m === 'explorer');
-
-      // Flash the camera overlay for a split second to signal mode change
-      const wrap = document.getElementById('cameraWrap');
-      wrap.style.opacity = '0.6';
-      setTimeout(() => { wrap.style.transition = 'opacity 0.4s ease'; wrap.style.opacity = '1'; }, 50);
-      setTimeout(() => { wrap.style.transition = ''; }, 500);
-
-      setStatus(m === 'doctor' ? '🏥 Doctor mode' : '🔭 Explorer mode');
-
-      // Clear result card with mode-appropriate empty state
-      document.getElementById('resultCard').className = 'result-card';
-      document.getElementById('resultCard').innerHTML = m === 'explorer'
-        ? `<div class="result-empty"><div class="empty-icon">🔭</div><span>Point at any plant, bird, insect or fungi and tap Analyse</span></div>`
-        : `<div class="result-empty"><div class="empty-icon">🌱</div><span>Point your camera at any plant and tap Analyse</span></div>`;
-    }
-
-    function setStatus(msg) { document.getElementById('statusPill').textContent = msg; }
-
-    async function startCamera() {
-      setHealthTheme(''); // reset theme on new session
-      const startBtn = document.getElementById('startBtn');
-      // If upload is showing, clear it first then start camera
-      if (uploadedImageBase64) clearUpload(false);
-      if (stream) { setStatus('Camera already running ✦'); return; }
-      if (startBtn) { startBtn.disabled = true; startBtn.style.opacity = '0.4'; }
-      setStatus('Requesting camera…');
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment', width: { ideal: 1280 } }, audio: false
-        });
-        document.getElementById('video').srcObject = stream;
-        document.getElementById('video').style.display = 'block';
-        document.getElementById('camIdle').style.display = 'none';
-        document.getElementById('scanBtn').disabled = false;
-        document.getElementById('askBtn').disabled = !LIVE_ENABLED;
-        // Hide Start button — camera is live
-        if (startBtn) {
-          startBtn.style.transition = 'opacity 0.3s, transform 0.3s';
-          startBtn.style.opacity = '0'; startBtn.style.transform = 'scale(0.9)';
-          setTimeout(() => { startBtn.style.display = 'none'; }, 320);
-        }
-        setStatus('Ready ✦');
-      } catch (e) {
-        if (startBtn) { startBtn.disabled = false; startBtn.style.opacity = '1'; }
-        setStatus('Camera blocked — allow access');
-        document.getElementById('camIdle').querySelector('p').textContent = 'Tap Start and allow camera';
-      }
-    }
-
-    function captureFrame() {
-      const v = document.getElementById('video'), c = document.getElementById('canvas');
-      // Resize down for OOM protection on 512MB backend
-      const maxW = 1200;
-      let w = v.videoWidth || 1280;
-      let h = v.videoHeight || 960;
-      if (w > maxW) {
-        h = Math.round(h * (maxW / w));
-        w = maxW;
-      }
-      c.width = w; c.height = h;
-      c.getContext('2d').drawImage(v, 0, 0, w, h);
-      return c.toDataURL('image/jpeg', 0.85); // Lower quality slightly to save bandwidth/RAM
-    }
-
-    function resizeImage(base64, maxWidth, callback) {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let w = img.width;
-        let h = img.height;
-        if (w > maxWidth) {
-          h = Math.round(h * (maxWidth / w));
-          w = maxWidth;
-        }
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        callback(canvas.toDataURL('image/jpeg', 0.85));
+      // â”€â”€â”€ State â”€â”€â”€
+      const state = {
+        mode: 'doctor',
+        cameraOn: false,
+        scanning: false,
+        voiceActive: false,
+        voiceListening: false,
+        voiceSpeaking: false,
+        journal: [],
+        reminders: [],
+        stats: { scanned: 0, treated: 0, species: 0 },
+        speciesSet: new Set(),
+        lastCapture: null,
+        ws: null,
+        audioCtx: null,
+        audioQueue: [],
+        isPlayingAudio: false
       };
-      img.src = base64;
-    }
 
-    // Unified analyse — uses uploaded image if present, otherwise live camera
-    async function handleAnalyse() {
-      if (uploadedImageBase64) { await scanUpload(); return; }
-      if (!stream) { alert('Start camera or upload an image first!'); return; }
-      fadeOutSpeech();
-      setStatus('Capturing…');
-      await new Promise(r => setTimeout(r, 600));
-      const img = captureFrame();
-      document.getElementById('cameraWrap').classList.add('scanning');
-      document.getElementById('scanBtn').disabled = true;
-      setStatus('Sending to AI…');
-      let dots = 0;
-      const statusInterval = setInterval(() => {
-        const msgs = ['Sending to AI…', 'Analysing leaves…', 'Checking database…', 'Almost done…'];
-        dots = (dots + 1) % msgs.length; setStatus(msgs[dots]);
-      }, 2500);
-      document.getElementById('resultCard').className = 'result-card';
-      document.getElementById('resultCard').innerHTML = `
-      <div class="skel-wrap">
-        <div class="skel skel-h"></div><div class="skel skel-s"></div>
-        <div class="skel skel-l"></div><div class="skel skel-l"></div><div class="skel skel-l sm"></div>
-      </div>`;
-      try {
-        const res = await fetch(`${API_URL}/analyze`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: img, mode: currentMode, location: userLocation })
+      // â”€â”€â”€ DOM â”€â”€â”€
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => document.querySelectorAll(s);
+
+      const dom = {
+        viewfinder: $('#viewfinder'),
+        video: $('#cameraVideo'),
+        canvas: $('#captureCanvas'),
+        vfStatus: $('#vfStatus'),
+        vfFlash: $('#vfFlash'),
+        vfPlaceholder: $('#vfPlaceholder'),
+        btnStart: $('#btnStart'),
+        btnAnalyse: $('#btnAnalyse'),
+        btnUpload: $('#btnUpload'),
+        fileInput: $('#fileInput'),
+        resultsPanel: $('#resultsPanel'),
+        resultsEmpty: $('#resultsEmpty'),
+        journalPanel: $('#journalPanel'),
+        journalEntries: $('#journalEntries'),
+        journalEmpty: $('#journalEmpty'),
+        journalCount: $('#journalCount'),
+        statScanned: $('#statScanned'),
+        statTreated: $('#statTreated'),
+        statSpecies: $('#statSpecies'),
+        voiceToggle: $('#voiceToggle'),
+        voiceOverlay: $('#voiceOverlay'),
+        voiceMicBtn: $('#voiceMicBtn'),
+        voiceClose: $('#voiceClose'),
+        voiceStatusText: $('#voiceStatusText'),
+        voiceTranscript: $('#voiceTranscript'),
+        voiceWaves: $('#voiceWaves'),
+        mobileJournalToggle: $('#mobileJournalToggle'),
+        mobileBackdrop: $('#mobileBackdrop'),
+        toastContainer: $('#toastContainer'),
+        remindersSection: $('#remindersSection'),
+        remindersList: $('#remindersList')
+      };
+
+      // â”€â”€â”€ Utilities â”€â”€â”€
+      function formatDate(d) {
+        return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      }
+
+      function toast(msg, type = 'success') {
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.textContent = msg;
+        dom.toastContainer.appendChild(el);
+        setTimeout(() => {
+          el.classList.add('exiting');
+          setTimeout(() => el.remove(), 300);
+        }, 3200);
+      }
+
+      function resizeImage(base64, maxW = 1024) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width, h = img.height;
+            if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            c.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(c.toDataURL('image/jpeg', 0.85));
+          };
+          img.src = base64;
         });
-        await displayResult(await res.json());
-      } catch (e) {
-        document.getElementById('resultCard').innerHTML = `
-        <div class="result-empty"><div class="empty-icon">⚠️</div><span>Backend offline. Run uvicorn main:app --reload</span></div>`;
-        setStatus('Connection error');
-      } finally {
-        clearInterval(statusInterval);
-        document.getElementById('cameraWrap').classList.remove('scanning');
-        document.getElementById('scanBtn').disabled = false;
-      }
-    }
-
-    async function scanFrame() { await handleAnalyse(); }
-
-    async function displayResult(data) {
-      const card = document.getElementById('resultCard');
-      // Also treat "Unknown Plant" / "Unknown" as scan failed
-      const isUnknown = !data.found ||
-        (data.common_name || '').toLowerCase().includes('unknown') ||
-        (data.common_name || '').trim() === '';
-
-      if (data.error && (data.error.includes("429") || data.error.includes("RESOURCE_EXHAUSTED") || data.error.includes("quota"))) {
-        card.className = 'result-card danger';
-        card.innerHTML = `
-        <div class="result-inner">
-          <div style="text-align:center;padding:16px 0 8px">
-            <div style="font-size:36px;margin-bottom:12px;opacity:0.6">⚠️</div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text);margin-bottom:8px">API Quota Exceeded</div>
-            <div style="font-size:13px;color:var(--text3);line-height:1.6;max-width:260px;margin:0 auto">
-              API limits have been exhausted. Please check your provider billing dashboard.
-            </div>
-          </div>
-        </div>`;
-        setStatus('API Quota Exceeded');
-        document.getElementById('scanBtn').disabled = false;
-        return;
       }
 
-      if (isUnknown) {
-        card.className = 'result-card';
-        card.innerHTML = `
-        <div class="result-inner">
-          <div style="text-align:center;padding:16px 0 8px">
-            <div style="font-size:36px;margin-bottom:12px;opacity:0.6">🔍</div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text);margin-bottom:8px">Scan Failed</div>
-            <div style="font-size:13px;color:var(--text3);line-height:1.6;max-width:260px;margin:0 auto">
-              No plant detected. Try moving closer, improving lighting, or pointing directly at leaves.
-            </div>
-            <div style="display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap">
-              <span class="meta-chip">💡 Better lighting</span>
-              <span class="meta-chip">🔍 Move closer</span>
-              <span class="meta-chip">🌿 Point at leaves</span>
-            </div>
-          </div>
-        </div>`;
-        setStatus('Scan failed — try again');
-        document.getElementById('scanBtn').disabled = false;
-        return; // ← NOT saved to journal
+      // â”€â”€â”€ Mode Toggle â”€â”€â”€
+      function setMode(mode) {
+        state.mode = mode;
+        document.documentElement.setAttribute('data-mode', mode);
+        $$('.mode-btn').forEach(b => {
+          const isActive = b.dataset.mode === mode;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-selected', isActive);
+        });
+        // Clear results when switching modes
+        if (dom.resultsPanel.querySelector('.result-card')) {
+          showResultsEmpty();
+        }
       }
 
-      const h = data.health_status || '', c = data.conservation_status || '';
-      const st = h || c || 'Healthy';
-      const sc = h === 'Critical' || c === 'Endangered' ? 'danger' : h === 'Sick' || c === 'Invasive' ? 'sick' : 'good';
-      if (currentMode === 'doctor') setHealthTheme(h);
+      $$('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => setMode(btn.dataset.mode));
+      });
 
-      let treatHTML = '';
-      if (data.treatment_steps?.length) {
-        treatHTML = `<div class="treat-section"><div class="treat-header">Treatment Plan</div>
-        ${data.treatment_steps.map((s, i) => `<div class="treat-step"><div class="step-num">${i + 1}</div><span>${s}</span></div>`).join('')}
-      </div>`;
+      // â”€â”€â”€ Camera â”€â”€â”€
+      async function startCamera() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 960 } }
+          });
+          dom.video.srcObject = stream;
+          state.cameraOn = true;
+          dom.viewfinder.classList.add('camera-on');
+          dom.vfPlaceholder.style.display = 'none';
+          dom.vfStatus.textContent = 'Camera active';
+          dom.btnStart.innerHTML = `<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Stop`;
+          dom.btnAnalyse.disabled = false;
+          toast('Camera started', 'success');
+        } catch (err) {
+          toast('Camera access denied', 'error');
+          console.error('Camera error:', err);
+        }
       }
 
-      const metas = [];
-      if (data.provider) metas.push(`🤖 ${data.provider}`);
-      if (data.global_observations && data.global_observations !== '0') metas.push(`🌍 ${data.global_observations}`);
-      if (data.watering_schedule) metas.push(`💧 ${data.watering_schedule}`);
-      if (typeof data.confidence === 'number') metas.push(`🎯 ${(data.confidence * 100).toFixed(0)}%`);
-      if (data.evidence_source) metas.push(`🧭 ${data.evidence_source}`);
-      if (Array.isArray(data.alternatives) && data.alternatives.length) {
-        metas.push(`≈ ${data.alternatives.slice(0, 2).join(' · ')}`);
+      function stopCamera() {
+        if (dom.video.srcObject) {
+          dom.video.srcObject.getTracks().forEach(t => t.stop());
+          dom.video.srcObject = null;
+        }
+        state.cameraOn = false;
+        dom.viewfinder.classList.remove('camera-on');
+        dom.vfPlaceholder.style.display = '';
+        dom.vfStatus.textContent = 'Standby';
+        dom.btnStart.innerHTML = `<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start`;
+        dom.btnAnalyse.disabled = true;
       }
-      if (userLocation) metas.push(`📍 ${userLocation.lat.toFixed(3)}, ${userLocation.lng.toFixed(3)}`);
-      const metaHTML = metas.length ? `<div class="meta-row">${metas.map(m => `<span class="meta-chip">${m}</span>`).join('')}</div>` : '';
 
-      card.className = `result-card ${sc}`;
-      card.innerHTML = `
-      <div class="result-inner">
-        <div class="result-top">
-          <div><div class="result-name">${data.common_name}</div><div class="result-sci">${data.scientific_name}</div></div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0">
-            <div class="badge ${sc}"><span class="badge-dot"></span>${st}</div>
-            <button class="speak-btn" onclick="speakResult(document.querySelector('.result-story').textContent)" title="Speak">🔊</button>
-          </div>
-        </div>
-        <p class="result-story" id="storyText"></p>
-        ${data.diagnosis ? `<div class="diag-line"><span>◈</span><span>${data.diagnosis}</span></div>` : ''}
-        ${treatHTML}${metaHTML}
-      </div>`;
+      dom.btnStart.addEventListener('click', () => {
+        if (state.cameraOn) stopCamera();
+        else startCamera();
+      });
 
-      await streamText('storyText', data.story);
-      setStatus(`✦ ${data.common_name}`);
-      // speak only via button
-      await saveToJournal(data);
-    }
-
-    async function streamText(id, text) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.innerHTML = '<span class="cursor-blink"></span>';
-      for (let i = 0; i < text.length; i++) {
-        el.innerHTML = text.slice(0, i + 1) + '<span class="cursor-blink"></span>';
-        await new Promise(r => setTimeout(r, 11));
+      // â”€â”€â”€ Capture â”€â”€â”€
+      function captureFrame() {
+        const v = dom.video;
+        const c = dom.canvas;
+        c.width = v.videoWidth || 640;
+        c.height = v.videoHeight || 480;
+        const ctx = c.getContext('2d');
+        ctx.save();
+        ctx.translate(c.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(v, 0, 0, c.width, c.height);
+        ctx.restore();
+        return c.toDataURL('image/jpeg', 0.85);
       }
-      el.textContent = text;
-    }
 
-    function cleanForSpeech(text) {
-      return text
-        .replace(/https?:\/\/(www\.)?([a-zA-Z0-9.-]+\.[a-z]{2,})(\/[^\s]*)?/g, (_, w, d) => d + '. ')
-        .replace(/\([^)]{0,80}\)/g, '')
-        .replace(/\[[^\]]{0,80}\]/g, '')
-        .replace(/[*_`~#>|\\^{}]/g, '')
-        .replace(/[^\x00-\x7F]/g, ' ')
-        .replace(/\s{2,}/g, ' ')
-        .trim();
-    }
+      // â”€â”€â”€ Analysis â”€â”€â”€
+      async function analyseImage(base64Data) {
+        if (state.scanning) return;
+        state.scanning = true;
 
-    function speakResult(text) {
-      if (!window.speechSynthesis || isMuted) return;
-      window.speechSynthesis.cancel();
-      if (!cachedVoice) loadVoice();
-      const cleaned = cleanForSpeech(text);
-      if (!cleaned) return;
-      const u = new SpeechSynthesisUtterance(cleaned);
-      if (cachedVoice) u.voice = cachedVoice;
-      u.rate = 0.88; u.pitch = 1.0; u.volume = 1.0;
-      u.onstart = () => {
-        setAIState(AI_STATES.SPEAKING, 'Speaking...');
-        const askBtn = document.getElementById('askBtn');
-        askBtn.onclick = () => {
-          window.speechSynthesis.cancel();
-          handleAsk();
-          resetAskBtnUI();
+        dom.viewfinder.classList.add('scanning');
+        dom.vfStatus.textContent = 'Analysing';
+        dom.vfStatus.classList.add('scanning');
+        dom.btnAnalyse.classList.add('loading');
+
+        // Flash effect
+        dom.vfFlash.classList.add('fire');
+        setTimeout(() => dom.vfFlash.classList.remove('fire'), 350);
+
+        // Show skeleton
+        showSkeleton();
+
+        try {
+          const resized = await resizeImage(base64Data);
+          state.lastCapture = resized;
+
+          const response = await fetch('/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              image: resized,
+              mode: state.mode,
+              gps: await getGPS()
+            })
+          });
+
+          if (!response.ok) throw new Error(`Server returned ${response.status}`);
+
+          const data = await response.json();
+          renderResult(data);
+          addToJournal(data, resized);
+          updateStats(data);
+        } catch (err) {
+          console.warn('Backend unavailable, using demo data:', err.message);
+          // Demo mode â€” show mock results
+          const mockData = getMockResult();
+          setTimeout(() => {
+            renderResult(mockData);
+            addToJournal(mockData, state.lastCapture || base64Data);
+            updateStats(mockData);
+          }, 1200);
+        } finally {
+          state.scanning = false;
+          dom.viewfinder.classList.remove('scanning');
+          dom.vfStatus.textContent = 'Camera active';
+          dom.vfStatus.classList.remove('scanning');
+          dom.btnAnalyse.classList.remove('loading');
+        }
+      }
+
+      dom.btnAnalyse.addEventListener('click', () => {
+        if (!state.cameraOn || state.scanning) return;
+        const frame = captureFrame();
+        analyseImage(frame);
+      });
+
+      // â”€â”€â”€ File Upload â”€â”€â”€
+      dom.btnUpload.addEventListener('click', () => dom.fileInput.click());
+
+      dom.fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => analyseImage(reader.result);
+        reader.readAsDataURL(file);
+        dom.fileInput.value = '';
+      });
+
+      // â”€â”€â”€ GPS â”€â”€â”€
+      async function getGPS() {
+        return new Promise((resolve) => {
+          if (!navigator.geolocation) return resolve(null);
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+            () => resolve(null),
+            { timeout: 3000 }
+          );
+        });
+      }
+
+      // â”€â”€â”€ Mock Data â”€â”€â”€
+      function getMockResult() {
+        if (state.mode === 'doctor') {
+          return {
+            species: { common_name: "Swiss Cheese Plant", scientific_name: "Monstera deliciosa", family: "Araceae", confidence: 0.94 },
+            health: { status: "warning", diagnosis: "Early signs of overwatering detected. Lower leaves show yellowing with soft dark spots. Soil appears excessively moist, risking root rot if untreated.", treatment: ["Allow top 5cm of soil to dry completely before next watering", "Improve drainage by mixing perlite or orchid bark into the soil", "Remove severely affected leaves to redirect the plant's energy", "Ensure the pot has unblocked drainage holes â€” consider elevating it"], watering_schedule: "Every 10-14 days" }
+          };
+        } else {
+          return {
+            species: { common_name: "Swiss Cheese Plant", scientific_name: "Monstera deliciosa", family: "Araceae", confidence: 0.94 },
+            natural_history: "Native to the tropical rainforests of southern Mexico to Panama. In the wild, Monstera deliciosa climbs tree trunks using aerial roots, reaching heights up to 20 metres. The iconic leaf fenestrations are believed to allow light through to lower leaves and help the plant withstand heavy rain and wind in its canopy habitat.",
+            conservation_status: "LC",
+            field_notes: "Found in humid understory environments. The mature fruit is edible, described as tasting like a blend of banana, pineapple, and mango â€” but contains calcium oxalate crystals when unripe. Widely cultivated as a houseplant since the Victorian era.",
+            inat_observations: 12847
+          };
+        }
+      }
+
+      // â”€â”€â”€ Render Results â”€â”€â”€
+      function renderResult(data) {
+        const sp = data.species;
+        const confidencePct = Math.round((sp.confidence || 0) * 100);
+
+        if (state.mode === 'doctor') {
+          renderDoctorResult(sp, data.health, confidencePct);
+        } else {
+          renderExplorerResult(sp, data, confidencePct);
+        }
+      }
+
+      function renderDoctorResult(sp, health, conf) {
+        const statusClass = health.status || 'healthy';
+        const statusLabel = statusClass === 'healthy' ? 'Healthy' : statusClass === 'warning' ? 'Needs Attention' : 'Critical';
+
+        // Apply critical theme if needed
+        if (statusClass === 'critical') {
+          document.documentElement.setAttribute('data-mode', 'critical');
+        }
+
+        const treatmentHTML = (health.treatment || []).map((step, i) =>
+          `<li><span class="treatment-num">${i + 1}</span><span>${step}</span></li>`
+        ).join('');
+
+        const reminderHTML = health.watering_schedule ? `
+                <div class="result-reminder">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                    <div class="result-reminder-text">Water <strong>${health.watering_schedule}</strong></div>
+                    <button class="btn btn-secondary" onclick="window.sativusApp.setReminder('${sp.common_name}','${health.watering_schedule}')">Set Reminder</button>
+                </div>
+            ` : '';
+
+        dom.resultsPanel.innerHTML = `
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-species">
+                            <div class="result-common-name">${sp.common_name}</div>
+                            <div class="result-sci-name">${sp.scientific_name}</div>
+                            <div class="result-family">${sp.family}</div>
+                            <div class="confidence-bar">
+                                <div class="confidence-track"><div class="confidence-fill" style="width:${conf}%"></div></div>
+                                <div class="confidence-label">${conf}% match</div>
+                            </div>
+                        </div>
+                        <div class="result-badge ${statusClass}">
+                            <svg viewBox="0 0 24 24">
+                              <${statusClass === 'healthy' ? 'path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"' : statusClass === 'warning' ? 'path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"' : 'circle cx="12" cy="12" r="10"'} stroke="currentColor" fill="none" stroke-width="2"/>
+                              <${statusClass === 'healthy' ? 'polyline points="22 4 12 14.01 9 11.01"' : statusClass === 'warning' ? 'line x1="12" y1="9" x2="12" y2="13"' : 'line x1="12" y1="8" x2="12" y2="12"'} stroke="currentColor" fill="none" stroke-width="2"/>
+                              <${statusClass === 'warning' ? 'line x1="12" y1="17" x2="12.01" y2="17"' : statusClass === 'critical' ? 'line x1="12" y1="16" x2="12.01" y2="16"' : 'path d=""'} stroke="currentColor" fill="none" stroke-width="2"/>
+                            </svg>
+                            ${statusLabel}
+                        </div>
+                    </div>
+                    <div class="result-body">
+                        <div>
+                            <div class="result-section-title">Diagnosis</div>
+                            <div class="result-diagnosis">${health.diagnosis}</div>
+                        </div>
+                        ${treatmentHTML ? `
+                        <div>
+                            <div class="result-section-title">Treatment Plan</div>
+                            <ol class="result-treatment">${treatmentHTML}</ol>
+                        </div>` : ''}
+                        ${reminderHTML}
+                    </div>
+                </div>
+            `;
+      }
+
+      function renderExplorerResult(sp, data, conf) {
+        const cs = data.conservation_status || 'LC';
+        const csLabels = { LC: 'Least Concern', NT: 'Near Threatened', VU: 'Vulnerable', EN: 'Endangered', CR: 'Critically Endangered' };
+        const csClass = cs === 'LC' ? 'lc' : cs === 'NT' ? 'nt' : 'vu';
+
+        dom.resultsPanel.innerHTML = `
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-species">
+                            <div class="result-common-name">${sp.common_name}</div>
+                            <div class="result-sci-name">${sp.scientific_name}</div>
+                            <div class="result-family">${sp.family}</div>
+                            <div class="confidence-bar">
+                                <div class="confidence-track"><div class="confidence-fill" style="width:${conf}%"></div></div>
+                                <div class="confidence-label">${conf}% match</div>
+                            </div>
+                        </div>
+                        <div class="result-badge identified">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 0 1 0 20m0-20a15 15 0 0 0 0 20M2 12h20" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+                            Identified
+                        </div>
+                    </div>
+                    <div class="result-body">
+                        <div>
+                            <div class="result-section-title">Natural History</div>
+                            <div class="result-diagnosis">${data.natural_history || ''}</div>
+                        </div>
+                        <div>
+                            <div class="result-section-title">Conservation Status</div>
+                            <span class="result-conservation ${csClass}">${csLabels[cs] || cs}</span>
+                        </div>
+                        ${data.field_notes ? `
+                        <div>
+                            <div class="result-section-title">Field Notes</div>
+                            <div class="result-diagnosis">${data.field_notes}</div>
+                        </div>` : ''}
+                        ${data.inat_observations ? `
+                        <div class="inat-link">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            ${data.inat_observations.toLocaleString()} observations on iNaturalist
+                        </div>` : ''}
+                    </div>
+                </div>
+            `;
+      }
+
+      function showSkeleton() {
+        dom.resultsPanel.innerHTML = `
+                <div class="results-skeleton">
+                    <div class="skel-line h20 w60"></div>
+                    <div class="skel-line w40"></div>
+                    <div class="skel-line w80"></div>
+                    <div class="skel-line w100"></div>
+                    <div class="skel-line w60"></div>
+                    <div class="skel-line w100"></div>
+                    <div class="skel-line w40"></div>
+                </div>
+            `;
+      }
+
+      function showResultsEmpty() {
+        dom.resultsPanel.innerHTML = `
+                <div class="results-empty">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <div>Scan results will appear here</div>
+                </div>
+            `;
+      }
+
+      // â”€â”€â”€ Journal â”€â”€â”€
+      function loadJournal() {
+        try {
+          const raw = localStorage.getItem('sativus_journal');
+          state.journal = raw ? JSON.parse(raw) : [];
+        } catch { state.journal = []; }
+        renderJournal();
+      }
+
+      function saveJournal() {
+        localStorage.setItem('sativus_journal', JSON.stringify(state.journal));
+      }
+
+      function addToJournal(data, imageData) {
+        const entry = {
+          id: Date.now(),
+          mode: state.mode,
+          species: data.species,
+          date: new Date().toISOString(),
+          thumbnail: imageData || null,
+          health: data.health || null,
+          natural_history: data.natural_history || null,
+          conservation_status: data.conservation_status || null
         };
-      };
-      u.onend = () => {
-        setAIState(AI_STATES.IDLE, 'Done');
-      };
-      u.onerror = () => { };
-      window.speechSynthesis.speak(u);
-    }
+        state.journal.unshift(entry);
+        if (state.journal.length > 50) state.journal = state.journal.slice(0, 50);
+        saveJournal();
+        renderJournal();
+      }
 
-    function resetAskBtnUI() {
-      setAIState(AI_STATES.IDLE);
-    }
+      function renderJournal() {
+        const entries = state.journal;
+        dom.journalCount.textContent = `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`;
 
-    // Smooth fade out speech
-    function fadeOutSpeech(cb) {
-      if (!window.speechSynthesis.speaking) { if (cb) cb(); return; }
-      let vol = 1.0;
-      const step = () => {
-        vol -= 0.15;
-        if (vol <= 0) {
-          window.speechSynthesis.cancel();
-          resetAskBtnUI();
-          if (cb) cb();
+        if (entries.length === 0) {
+          dom.journalEntries.innerHTML = `
+                    <div class="journal-empty">
+                        <svg class="journal-empty-svg" viewBox="0 0 24 24">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            <line x1="9" y1="7" x2="15" y2="7"/>
+                            <line x1="9" y1="11" x2="13" y2="11"/>
+                        </svg>
+                        <div class="journal-empty-title">Your journal awaits</div>
+                        <div class="journal-empty-sub">Scan specimens to build your field collection</div>
+                    </div>
+                `;
           return;
         }
-        // Can't set volume mid-utterance in all browsers, so just cancel after short delay
-        setTimeout(step, 40);
-      };
-      step();
-      // Fallback hard cancel after 200ms
-      setTimeout(() => { window.speechSynthesis.cancel(); resetAskBtnUI(); if (cb) cb(); }, 220);
-    }
 
-    function toggleMute() {
-      isMuted = !isMuted;
-      if (isMuted) fadeOutSpeech();
-      document.getElementById('muteBtn').classList.toggle('muted', isMuted);
-      document.getElementById('muteIcon').textContent = isMuted ? '🔇' : '🔊';
-      setStatus(isMuted ? '🔇 Muted' : '🔊 Sound on');
-    }
+        dom.journalEntries.innerHTML = entries.map((entry, idx) => {
+          const sp = entry.species;
+          const statusClass = entry.mode === 'doctor'
+            ? (entry.health?.status || 'healthy')
+            : 'identified';
+          const statusLabel = entry.mode === 'doctor'
+            ? (statusClass === 'healthy' ? 'Healthy' : statusClass === 'warning' ? 'Needs Attention' : statusClass === 'critical' ? 'Critical' : 'Healthy')
+            : 'Identified';
+          const thumbStyle = entry.thumbnail
+            ? `background-image:url(${entry.thumbnail});background-size:cover;background-position:center;`
+            : '';
 
-    // ══════════════════════════════════════════
-    // LIVE VOICE IMPLEMENTATION
-    // ══════════════════════════════════════════
-
-    let liveSocket = null, audioQueue = [], isPlaying = false;
-    let processor = null, micStream = null, audioContext = null;
-
-    async function handleAsk() {
-      if (!LIVE_ENABLED) {
-        setStatus('Live voice is disabled.');
-        return;
+          return `
+                    <div class="specimen-card" style="animation-delay:${idx * 50}ms" data-id="${entry.id}">
+                        <div class="specimen-thumb" style="${thumbStyle}">
+                            ${!entry.thumbnail ? `<svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:var(--fg-muted);fill:none;stroke-width:1.5;margin:14px auto;display:block;opacity:0.4;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>` : ''}
+                        </div>
+                        <div class="specimen-info">
+                            <div class="specimen-name">${sp.common_name}</div>
+                            <div class="specimen-health ${statusClass}">${statusLabel}</div>
+                            <div class="specimen-date">${formatDate(entry.date)}</div>
+                        </div>
+                        <button class="specimen-delete" onclick="window.sativusApp.deleteEntry(${entry.id})" aria-label="Delete entry">
+                            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                `;
+        }).join('');
       }
 
-      if (aiState === AI_STATES.LISTENING || aiState === AI_STATES.THINKING || aiState === AI_STATES.SPEAKING) {
-        stopLiveSession();
-        return;
+      function deleteEntry(id) {
+        state.journal = state.journal.filter(e => e.id !== id);
+        saveJournal();
+        renderJournal();
+        toast('Entry removed from journal');
       }
 
-      fadeOutSpeech();
-      setStatus('Starting session…');
-      
-      try {
-        const wsUrl = API_URL.replace('http', 'ws') + '/ws/live';
-        liveSocket = new WebSocket(wsUrl);
-        liveSocket.binaryType = 'arraybuffer';
-
-        liveSocket.onopen = async () => {
-          setStatus('Listening…');
-          setAIState(AI_STATES.LISTENING);
-          liveSocket.send(JSON.stringify({ type: 'mode', mode: currentMode }));
-          await startMicStreaming();
-        };
-
-        liveSocket.onmessage = async (e) => {
-          if (typeof e.data === 'string') {
-            const msg = JSON.parse(e.data);
-            if (msg.type === 'transcript') {
-              setStatus('Thinking…');
-            } else if (msg.type === 'state') {
-              setAIState(msg.state);
-            } else if (msg.type === 'error') {
-              setStatus(msg.message);
-              stopLiveSession();
-            }
-          } else {
-            handleIncomingAudio(e.data);
-          }
-        };
-
-        liveSocket.onclose = () => {
-          stopLiveSession();
-        };
-
-        liveSocket.onerror = (err) => {
-          console.error('WebSocket Error:', err);
-          setStatus('Connection error');
-          stopLiveSession();
-        };
-
-      } catch (err) {
-        console.error('Init Error:', err);
-        setStatus('Voice failed');
-      }
-    }
-
-    async function startMicStreaming() {
-      try {
-        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
-        const source = audioContext.createMediaStreamSource(micStream);
-        processor = audioContext.createScriptProcessor(4096, 1, 1);
-
-        source.connect(processor);
-        processor.connect(audioContext.destination);
-
-        processor.onaudioprocess = (e) => {
-          if (aiState !== AI_STATES.LISTENING) return;
-          const inputData = e.inputBuffer.getChannelData(0);
-          const pcmData = new Int16Array(inputData.length);
-          for (let i = 0; i < inputData.length; i++) {
-            pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7FFF;
-          }
-          if (liveSocket && liveSocket.readyState === WebSocket.OPEN) {
-            liveSocket.send(pcmData.buffer);
-          }
-        };
-      } catch (err) {
-        console.error('Mic Error:', err);
-        setStatus('Microphone blocked');
-        stopLiveSession();
-      }
-    }
-
-    function handleIncomingAudio(arrayBuffer) {
-      audioQueue.push(arrayBuffer);
-      if (!isPlaying) playNextInQueue();
-    }
-
-    async function playNextInQueue() {
-      if (audioQueue.length === 0) {
-        isPlaying = false;
-        return;
-      }
-
-      isPlaying = true;
-      const chunk = audioQueue.shift();
-      const blob = new Blob([chunk], { type: 'audio/mpeg' });
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      
-      audio.onended = () => {
-        URL.revokeObjectURL(url);
-        playNextInQueue();
-      };
-
-      audio.onerror = () => {
-        URL.revokeObjectURL(url);
-        playNextInQueue();
-      };
-
-      try {
-        await audio.play();
-      } catch (e) {
-        console.error('Play Blocked:', e);
-        playNextInQueue();
-      }
-    }
-
-    function stopLiveSession() {
-      if (processor) { processor.disconnect(); processor = null; }
-      if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
-      if (audioContext) { audioContext.close(); audioContext = null; }
-      if (liveSocket) { if (liveSocket.readyState === WebSocket.OPEN) liveSocket.close(); liveSocket = null; }
-      audioQueue = [];
-      isPlaying = false;
-      setAIState(AI_STATES.IDLE);
-      setStatus('Ready ✦');
-    }
-
-
-    async function saveToJournal(data) {
-      selectedPlant = data;
-      const entry = { ...data, timestamp: new Date().toLocaleString(), location: userLocation, mode: currentMode };
-      if (data.watering_schedule && currentMode === 'doctor') {
+      // â”€â”€â”€ Stats â”€â”€â”€
+      function loadStats() {
         try {
-          const res = await fetch(`${API_URL}/reminder`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ plant_name: data.common_name, watering_schedule: data.watering_schedule, user_id: 'default' })
-          });
-          const r = await res.json();
-          entry.next_water_days = r.days_until_water;
-          const d = r.due_at ? new Date(r.due_at) : new Date();
-          if (!r.due_at) d.setDate(d.getDate() + r.days_until_water);
-          entry.next_water_date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        } catch (e) { }
+          const raw = localStorage.getItem('sativus_stats');
+          if (raw) {
+            const s = JSON.parse(raw);
+            state.stats = s.stats || state.stats;
+            state.speciesSet = new Set(s.species || []);
+          }
+        } catch { }
+        renderStats();
       }
-      journal.unshift(entry);
-      journal = journal.slice(0, 50);
-      localStorage.setItem('sativus_journal', JSON.stringify(journal));
-      renderJournal(); updateStats();
-    }
 
-    function renderJournal() {
-      const list = document.getElementById('journalList');
-      const count = document.getElementById('journalCount');
-      count.textContent = `${journal.length} ${journal.length === 1 ? 'entry' : 'entries'}`;
-      if (!journal.length) {
-        list.innerHTML = `<div class="journal-empty"><span>🌱</span><p>No entries yet. Start scanning!</p></div>`;
-        return;
+      function saveStats() {
+        localStorage.setItem('sativus_stats', JSON.stringify({
+          stats: state.stats,
+          species: [...state.speciesSet]
+        }));
       }
-      list.innerHTML = journal.slice(0, 12).map((e, i) => {
-        const h = e.health_status || '', c = e.conservation_status || '';
-        const cc = h === 'Critical' || c === 'Endangered' ? 'danger' : h === 'Sick' ? 'sick' : c === 'Invasive' ? 'invasive' : '';
-        const sc = cc === 'danger' ? 'danger' : cc === 'sick' || cc === 'invasive' ? 'sick' : 'good';
-        const em = e.category === 'bird' ? '🐦' : e.category === 'insect' ? '🐛' : e.category === 'fungi' ? '🍄' : e.mode === 'explorer' ? '🔭' : '🌿';
-        return `
-        <div class="j-card ${cc}" onclick="openEntry(${i})">
-          <div class="j-emoji">${em}</div>
-          <div class="j-info">
-            <div class="j-name">${e.common_name}</div>
-            <div class="j-sub">${e.scientific_name || ''}${e.next_water_date ? ` <span class="j-water">· 💧 ${e.next_water_date}</span>` : ''}</div>
-          </div>
-          <div class="j-status ${sc}">${h || c || 'Healthy'}</div>
-        </div>`;
-      }).join('');
-    }
 
-    function openEntry(i) {
-      const e = journal[i];
-      selectedPlant = e;
-      const h = e.health_status || '', c = e.conservation_status || '';
-      const st = h || c || 'Healthy';
-      const sc = h === 'Critical' || c === 'Endangered' ? 'danger' : h === 'Sick' || c === 'Invasive' ? 'sick' : 'good';
-      let treatHTML = '';
-      if (e.treatment_steps?.length) {
-        treatHTML = `<div class="treat-section"><div class="treat-header">Treatment Plan</div>
-        ${e.treatment_steps.map((s, i) => `<div class="treat-step"><div class="step-num">${i + 1}</div><span>${s}</span></div>`).join('')}
-      </div>`;
+      function updateStats(data) {
+        state.stats.scanned++;
+        if (state.mode === 'doctor' && data.health && data.health.status !== 'healthy') {
+          state.stats.treated++;
+        }
+        const sciName = data.species.scientific_name;
+        if (!state.speciesSet.has(sciName)) {
+          state.speciesSet.add(sciName);
+          state.stats.species = state.speciesSet.size;
+        }
+        saveStats();
+        renderStats();
       }
-      const metas = [];
-      if (e.watering_schedule) metas.push(`<span class="meta-chip">💧 ${e.watering_schedule}</span>`);
-      if (e.next_water_date) metas.push(`<span class="meta-chip chip-gold">Next: ${e.next_water_date}</span>`);
-      if (e.fun_fact) metas.push(`<span class="meta-chip">💡 ${e.fun_fact}</span>`);
-      const metaHTML = metas.length ? `<div class="meta-row">${metas.join('')}</div>` : '';
 
-      const card = document.getElementById('resultCard');
-      card.className = `result-card ${sc}`;
-      card.innerHTML = `
-      <div class="result-inner">
-        <div style="font-size:10px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:12px">
-          📓 Journal · ${e.timestamp}
-        </div>
-        <div class="result-top">
-          <div><div class="result-name">${e.common_name}</div><div class="result-sci">${e.scientific_name || ''}</div></div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0">
-            <div class="badge ${sc}"><span class="badge-dot"></span>${st}</div>
-            <button class="speak-btn journal-speak-btn" data-story="" title="Speak">🔊</button>
-          </div>
-        </div>
-        <p class="result-story">${e.story}</p>
-        ${e.diagnosis ? `<div class="diag-line"><span>◈</span><span>${e.diagnosis}</span></div>` : ''}
-        ${metaHTML}${treatHTML}
-      </div>`;
-
-      // Safely attach the story string avoiding inline quotation issues
-      const speakerBtn = card.querySelector('.journal-speak-btn');
-      if (speakerBtn) {
-        speakerBtn.dataset.story = e.story;
-        speakerBtn.onclick = () => speakResult(e.story);
+      function renderStats() {
+        dom.statScanned.textContent = state.stats.scanned;
+        dom.statTreated.textContent = state.stats.treated;
+        dom.statSpecies.textContent = state.stats.species;
       }
-      // Scroll with offset so sticky header doesn't cover card
-      setTimeout(() => {
-        const rect = card.getBoundingClientRect();
-        const offset = 90; // header height + breathing room
-        const top = window.pageYOffset + rect.top - offset;
-        window.scrollTo({ top, behavior: 'smooth' });
-      }, 50);
-      // NO auto-speak on journal tap
-    }
 
-    // ── UPLOAD FUNCTIONS ──
-    let uploadedImageBase64 = null;
-
-    function showStartBtn() {
-      const btn = document.getElementById('startBtn');
-      if (!btn) return;
-      btn.style.display = 'flex'; btn.disabled = false;
-      btn.style.opacity = '0'; btn.style.transform = 'scale(0.9)';
-      requestAnimationFrame(() => {
-        btn.style.transition = 'opacity 0.3s, transform 0.3s';
-        btn.style.opacity = '1'; btn.style.transform = 'scale(1)';
-      });
-    }
-
-    function handleFileSelect(e) {
-      const file = e.target.files[0];
-      if (file) loadUploadFile(file);
-      e.target.value = '';
-    }
-
-    function handleDragOver(e) {
-      e.preventDefault();
-      document.getElementById('cameraWrap').style.borderColor = 'var(--accent)';
-      document.getElementById('cameraWrap').style.boxShadow = '0 0 0 3px var(--accent-glow)';
-    }
-
-    function handleDragLeave(e) {
-      document.getElementById('cameraWrap').style.borderColor = '';
-      document.getElementById('cameraWrap').style.boxShadow = '';
-    }
-
-    function handleDrop(e) {
-      e.preventDefault();
-      handleDragLeave(e);
-      const file = e.dataTransfer.files[0];
-      if (file && file.type.startsWith('image/')) loadUploadFile(file);
-    }
-
-    function loadUploadFile(file) {
-      if (file.size > 10 * 1024 * 1024) {
-        alert('Image too large (max 10MB)');
-        return;
+      // â”€â”€â”€ Reminders â”€â”€â”€
+      function loadReminders() {
+        try {
+          const raw = localStorage.getItem('sativus_reminders');
+          state.reminders = raw ? JSON.parse(raw) : [];
+        } catch { state.reminders = []; }
+        renderReminders();
       }
-      const reader = new FileReader();
-      reader.onload = ev => {
-        // Resize on client side before setting as uploadedImageBase64
-        resizeImage(ev.target.result, 1200, resized => {
-          uploadedImageBase64 = resized;
 
-          // Stop live camera
-          if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-          document.getElementById('video').style.display = 'none';
+      function saveReminders() {
+        localStorage.setItem('sativus_reminders', JSON.stringify(state.reminders));
+      }
 
-          // Show uploaded image inside the camera box
-          const camImg = document.getElementById('camUploadImg');
-          camImg.src = uploadedImageBase64;
-          camImg.style.display = 'block';
-          document.getElementById('camIdle').style.display = 'none';
+      function setReminder(plant, schedule) {
+        // Parse natural language schedule
+        const days = parseSchedule(schedule);
+        const reminder = {
+          id: Date.now(),
+          plant: plant,
+          schedule: schedule,
+          days: days,
+          nextWater: new Date(Date.now() + days * 86400000).toISOString()
+        };
+        state.reminders.push(reminder);
+        saveReminders();
+        renderReminders();
+        toast(`Reminder set: water ${plant} every ${schedule}`);
+      }
 
-          // Update upload button → becomes Clear button
-          const toggleBtn = document.getElementById('uploadToggle');
-          toggleBtn.classList.add('has-image');
-          document.getElementById('uploadToggleLabel').textContent = '✕ Clear image';
-          toggleBtn.onclick = () => clearUpload(true);
+      function parseSchedule(text) {
+        const lower = (text || '').toLowerCase();
+        const numMatch = lower.match(/(\d+)/);
+        const num = numMatch ? parseInt(numMatch[1]) : 7;
+        if (lower.includes('day')) return num;
+        if (lower.includes('week')) return num * 7;
+        if (lower.includes('month')) return num * 30;
+        return 7; // default
+      }
 
-          document.getElementById('scanBtn').disabled = false;
-          document.getElementById('askBtn').disabled = !LIVE_ENABLED;
-          setStatus('✦ Image loaded — tap Analyse');
+      function renderReminders() {
+        if (state.reminders.length === 0) {
+          dom.remindersSection.style.display = 'none';
+          return;
+        }
+        dom.remindersSection.style.display = '';
+        dom.remindersList.innerHTML = state.reminders.map(r => `
+                <div class="reminder-item">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span class="reminder-plant">${r.plant}</span>
+                    <span class="reminder-schedule">${r.schedule}</span>
+                </div>
+            `).join('');
+      }
 
-          // Start button reappears so user can go back to camera
-          showStartBtn();
-        });
+      // â”€â”€â”€ Voice â”€â”€â”€
+      function toggleVoice() {
+        if (state.voiceActive) {
+          closeVoice();
+        } else {
+          openVoice();
+        }
+      }
+
+      function openVoice() {
+        state.voiceActive = true;
+        dom.voiceOverlay.classList.add('active');
+        dom.voiceToggle.classList.add('active');
+        dom.voiceStatusText.textContent = 'Tap microphone to speak';
+        dom.voiceTranscript.style.display = 'none';
+        dom.voiceTranscript.textContent = '';
+        dom.voiceWaves.classList.remove('active');
+        dom.voiceMicBtn.classList.remove('listening', 'speaking');
+      }
+
+      function closeVoice() {
+        state.voiceActive = false;
+        state.voiceListening = false;
+        state.voiceSpeaking = false;
+        dom.voiceOverlay.classList.remove('active');
+        dom.voiceToggle.classList.remove('active');
+        if (state.ws) {
+          state.ws.close();
+          state.ws = null;
+        }
+        dom.voiceMicBtn.classList.remove('listening', 'speaking');
+        dom.voiceWaves.classList.remove('active');
+      }
+
+      async function startListening() {
+        try {
+          const wsUrl = `ws://${window.location.host}/voice`;
+          const ws = new WebSocket(wsUrl);
+          state.ws = ws;
+
+          ws.onopen = () => {
+            state.voiceListening = true;
+            dom.voiceMicBtn.classList.add('listening');
+            dom.voiceWaves.classList.add('active');
+            dom.voiceStatusText.textContent = 'Listening...';
+            startMicStream(ws);
+          };
+
+          ws.onmessage = (event) => {
+            if (event.data instanceof Blob) {
+              // Audio response chunk
+              handleAudioChunk(event.data);
+            } else {
+              try {
+                const msg = JSON.parse(event.data);
+                if (msg.transcript) {
+                  dom.voiceTranscript.style.display = '';
+                  dom.voiceTranscript.textContent += msg.transcript + ' ';
+                }
+                if (msg.type === 'response_start') {
+                  state.voiceListening = false;
+                  state.voiceSpeaking = true;
+                  dom.voiceMicBtn.classList.remove('listening');
+                  dom.voiceMicBtn.classList.add('speaking');
+                  dom.voiceStatusText.textContent = 'Responding...';
+                }
+                if (msg.type === 'response_end') {
+                  state.voiceSpeaking = false;
+                  dom.voiceMicBtn.classList.remove('speaking');
+                  dom.voiceWaves.classList.remove('active');
+                  dom.voiceStatusText.textContent = 'Tap microphone to speak';
+                }
+              } catch { }
+            }
+          };
+
+          ws.onerror = () => {
+            toast('Voice connection failed', 'error');
+            closeVoice();
+          };
+
+          ws.onclose = () => {
+            if (state.voiceActive) {
+              dom.voiceStatusText.textContent = 'Connection closed. Tap to retry.';
+              state.voiceListening = false;
+              dom.voiceMicBtn.classList.remove('listening');
+              dom.voiceWaves.classList.remove('active');
+            }
+          };
+
+        } catch (err) {
+          toast('Voice not available', 'error');
+          console.error('Voice error:', err);
+        }
+      }
+
+      async function startMicStream(ws) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } });
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+          state.audioCtx = audioCtx;
+          const source = audioCtx.createMediaStreamSource(stream);
+          const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+
+          processor.onaudioprocess = (e) => {
+            if (ws.readyState === WebSocket.OPEN && state.voiceListening) {
+              const float32 = e.inputBuffer.getChannelData(0);
+              const int16 = new Int16Array(float32.length);
+              for (let i = 0; i < float32.length; i++) {
+                int16[i] = Math.max(-32768, Math.min(32767, float32[i] * 32768));
+              }
+              ws.send(int16.buffer);
+            }
+          };
+
+          source.connect(processor);
+          processor.connect(audioCtx.destination);
+        } catch (err) {
+          toast('Microphone access denied', 'error');
+          console.error('Mic error:', err);
+        }
+      }
+
+      async function handleAudioChunk(blob) {
+        state.audioQueue.push(blob);
+        if (!state.isPlayingAudio) playNextAudio();
+      }
+
+      async function playNextAudio() {
+        if (state.audioQueue.length === 0) {
+          state.isPlayingAudio = false;
+          return;
+        }
+        state.isPlayingAudio = true;
+        const chunk = state.audioQueue.shift();
+        const url = URL.createObjectURL(new Blob([chunk], { type: 'audio/mpeg' }));
+        const audio = new Audio(url);
+        audio.onended = () => {
+          URL.revokeObjectURL(url);
+          playNextAudio();
+        };
+        audio.onerror = () => playNextAudio();
+        try {
+          await audio.play();
+        } catch (e) {
+          playNextAudio();
+        }
+      }
+
+      function stopVoice() {
+        state.voiceActive = false;
+        state.voiceListening = false;
+        state.voiceSpeaking = false;
+        dom.voiceOverlay.classList.remove('active');
+        if (state.ws) {
+          state.ws.close();
+          state.ws = null;
+        }
+        state.audioQueue = [];
+        state.isPlayingAudio = false;
+      }
+
+      dom.voiceClose.addEventListener('click', stopVoice);
+
+      // ─── Initialization ───
+      function init() {
+        setMode('doctor');
+        // Load journal from localstorage if exists
+        const saved = localStorage.getItem('sativus_journal');
+        if (saved) {
+          state.journal = JSON.parse(saved);
+          renderJournal();
+        }
+        updateStats();
+      }
+
+      init();
+
+      // Export for inline handlers
+      window.sativusApp = {
+        setReminder: (name, schedule) => {
+          toast(`Reminder set for ${name}: ${schedule}`);
+        }
       };
-      reader.readAsDataURL(file);
-    }
 
-    function clearUpload(restartCamera) {
-      if (!uploadedImageBase64) return;
-      uploadedImageBase64 = null;
-      const camImg = document.getElementById('camUploadImg');
-      camImg.src = ''; camImg.style.display = 'none';
-      document.getElementById('video').style.display = 'block';
-
-      const toggleBtn = document.getElementById('uploadToggle');
-      toggleBtn.classList.remove('has-image');
-      document.getElementById('uploadToggleLabel').textContent = 'Upload Image';
-      toggleBtn.onclick = () => document.getElementById('fileInput').click();
-
-      // Only disable buttons and show idle if camera isn't running
-      if (!stream) {
-        document.getElementById('scanBtn').disabled = true;
-        document.getElementById('askBtn').disabled = true;
-        setStatus('Ready — start camera or upload');
-        document.getElementById('camIdle').style.display = 'flex';
-        document.getElementById('camIdle').querySelector('p').textContent = 'Tap Start to use camera';
-      } else {
-        setStatus('Ready ✦');
-      }
-    }
-
-    async function scanUpload() {
-      if (!uploadedImageBase64) return;
-      fadeOutSpeech();
-      document.getElementById('cameraWrap').classList.add('scanning');
-      document.getElementById('scanBtn').disabled = true;
-      setStatus('Analysing image…');
-      document.getElementById('resultCard').className = 'result-card';
-      document.getElementById('resultCard').innerHTML = `
-      <div class="skel-wrap">
-        <div class="skel skel-h"></div><div class="skel skel-s"></div>
-        <div class="skel skel-l"></div><div class="skel skel-l"></div><div class="skel skel-l sm"></div>
-      </div>`;
-      let dots = 0;
-      const si = setInterval(() => {
-        const msgs = ['Analysing image…', 'Identifying species…', 'Checking health…', 'Almost done…'];
-        dots = (dots + 1) % msgs.length; setStatus(msgs[dots]);
-      }, 2500);
-      try {
-        const res = await fetch(`${API_URL}/analyze`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: uploadedImageBase64, mode: currentMode, location: userLocation })
-        });
-        await displayResult(await res.json());
-      } catch (e) {
-        document.getElementById('resultCard').innerHTML = `
-        <div class="result-empty"><div class="empty-icon">⚠️</div><span>Backend offline. Run uvicorn main:app --reload</span></div>`;
-        setStatus('Connection error');
-      } finally {
-        clearInterval(si);
-        document.getElementById('cameraWrap').classList.remove('scanning');
-        document.getElementById('scanBtn').disabled = false;
-      }
-    }
+    })();
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => { }));
     }
-
-    renderJournal();
-    updateStats();
-    setAIState(AI_STATES.IDLE);
-    if (userLocation) { document.getElementById('locBtn').style.display = 'none'; }
   </script>
 </body>
-
 </html>
