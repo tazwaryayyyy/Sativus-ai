@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-mode="doctor">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Sativus â€” Plant Doctor & Nature Explorer</title>
+  <title>Sativus Ã¢â‚¬â€ Plant Doctor & Nature Explorer</title>
   <meta name="description" content="Multimodal plant doctor and nature explorer powered by vision AI">
   <meta name="theme-color" content="#0E1512">
   <link rel="manifest" href="/manifest.json">
@@ -16,7 +16,7 @@
     rel="stylesheet">
 
   <style>
-    /* â”€â”€â”€ Design System â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Design System Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     :root {
       --bg-deep: #070C09;
       --bg: #0E1512;
@@ -71,7 +71,7 @@
       --accent-glow: rgba(196, 85, 80, 0.35);
     }
 
-    /* â”€â”€â”€ Reset â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Reset Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     *,
     *::before,
     *::after {
@@ -96,7 +96,7 @@
       line-height: 1.55;
     }
 
-    /* â”€â”€â”€ Noise Texture â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Noise Texture Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     body::after {
       content: '';
       position: fixed;
@@ -108,7 +108,7 @@
       background-size: 180px;
     }
 
-    /* â”€â”€â”€ Scrollbar â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Scrollbar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     ::-webkit-scrollbar {
       width: 5px;
     }
@@ -126,7 +126,7 @@
       background: var(--fg-muted);
     }
 
-    /* â”€â”€â”€ Typography â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Typography Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .font-display {
       font-family: var(--font-display);
     }
@@ -135,7 +135,7 @@
       font-family: var(--font-mono);
     }
 
-    /* â”€â”€â”€ App Shell â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ App Shell Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     #app {
       max-width: 1440px;
       margin: 0 auto;
@@ -144,7 +144,7 @@
       flex-direction: column;
     }
 
-    /* â”€â”€â”€ Header â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Header Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .app-header {
       padding: 20px 28px 16px;
       display: flex;
@@ -200,7 +200,7 @@
       gap: 10px;
     }
 
-    /* â”€â”€â”€ Mode Toggle â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Mode Toggle Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .mode-toggle {
       display: flex;
       background: var(--bg-raised);
@@ -254,7 +254,7 @@
       background: var(--accent-soft);
     }
 
-    /* â”€â”€â”€ Voice Button â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Voice Button Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .voice-btn {
       width: 38px;
       height: 38px;
@@ -303,7 +303,7 @@
       }
     }
 
-    /* â”€â”€â”€ Main Layout â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Main Layout Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .app-main {
       flex: 1;
       display: grid;
@@ -312,7 +312,7 @@
       overflow: hidden;
     }
 
-    /* â”€â”€â”€ Scan Panel â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Scan Panel Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .scan-panel {
       padding: 28px;
       display: flex;
@@ -321,7 +321,7 @@
       overflow-y: auto;
     }
 
-    /* â”€â”€â”€ Viewfinder â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Viewfinder Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .viewfinder-wrapper {
       position: relative;
       width: 100%;
@@ -681,7 +681,7 @@
       }
     }
 
-    /* â”€â”€â”€ Action Bar â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Action Bar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .action-bar {
       display: flex;
       align-items: center;
@@ -805,7 +805,7 @@
       display: none;
     }
 
-    /* â”€â”€â”€ Results Panel â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Results Panel Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .results-panel {
       max-width: 640px;
       margin: 0 auto;
@@ -1114,7 +1114,7 @@
       white-space: nowrap;
     }
 
-    /* â”€â”€â”€ Journal Panel â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Journal Panel Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .journal-panel {
       border-left: 1px solid var(--border-subtle);
       display: flex;
@@ -1368,7 +1368,7 @@
       stroke-width: 2;
     }
 
-    /* â”€â”€â”€ Voice Overlay â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Voice Overlay Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .voice-overlay {
       position: fixed;
       inset: 0;
@@ -1566,7 +1566,7 @@
       stroke-width: 2;
     }
 
-    /* â”€â”€â”€ Toast â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Toast Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .toast-container {
       position: fixed;
       bottom: 24px;
@@ -1633,7 +1633,7 @@
       }
     }
 
-    /* â”€â”€â”€ Reminders Section â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Reminders Section Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .reminders-section {
       padding: 16px 24px;
       border-top: 1px solid var(--border-subtle);
@@ -1680,7 +1680,7 @@
       color: var(--fg-muted);
     }
 
-    /* â”€â”€â”€ Mobile Journal Toggle â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Mobile Journal Toggle Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .mobile-journal-toggle {
       display: none;
       position: fixed;
@@ -1712,7 +1712,7 @@
       stroke-width: 2;
     }
 
-    /* â”€â”€â”€ Responsive â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Responsive Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     @media (max-width: 1023px) {
       .app-main {
         grid-template-columns: 1fr;
@@ -1799,7 +1799,7 @@
       }
     }
 
-    /* â”€â”€â”€ Reduced Motion â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Reduced Motion Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     @media (prefers-reduced-motion: reduce) {
 
       *,
@@ -1811,7 +1811,7 @@
       }
     }
 
-    /* â”€â”€â”€ Background Ambience â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Background Ambience Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .bg-glow {
       position: fixed;
       pointer-events: none;
@@ -1839,7 +1839,7 @@
       opacity: 0.05;
     }
 
-    /* â”€â”€â”€ Explorer-specific result styles â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Explorer-specific result styles Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
     .result-conservation {
       display: inline-flex;
       align-items: center;
@@ -2090,14 +2090,14 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <script>
-    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-       Sativus AI â€” Frontend Application
-       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+       Sativus AI Ã¢â‚¬â€ Frontend Application
+       Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 
     (function () {
       'use strict';
 
-      // â”€â”€â”€ State â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ State Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       const state = {
         mode: 'doctor',
         cameraOn: false,
@@ -2116,7 +2116,7 @@
         isPlayingAudio: false
       };
 
-      // â”€â”€â”€ DOM â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ DOM Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       const $ = (s) => document.querySelector(s);
       const $$ = (s) => document.querySelectorAll(s);
 
@@ -2154,7 +2154,7 @@
         remindersList: $('#remindersList')
       };
 
-      // â”€â”€â”€ Utilities â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Utilities Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       function formatDate(d) {
         return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       }
@@ -2185,7 +2185,7 @@
         });
       }
 
-      // â”€â”€â”€ Mode Toggle â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Mode Toggle Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       function setMode(mode) {
         state.mode = mode;
         document.documentElement.setAttribute('data-mode', mode);
@@ -2204,7 +2204,7 @@
         btn.addEventListener('click', () => setMode(btn.dataset.mode));
       });
 
-      // â”€â”€â”€ Camera â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Camera Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       async function startCamera() {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({
@@ -2242,7 +2242,7 @@
         else startCamera();
       });
 
-      // â”€â”€â”€ Capture â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Capture Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       function captureFrame() {
         const v = dom.video;
         const c = dom.canvas;
@@ -2257,7 +2257,7 @@
         return c.toDataURL('image/jpeg', 0.85);
       }
 
-      // â”€â”€â”€ Analysis â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Analysis Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       async function analyseImage(base64Data) {
         if (state.scanning) return;
         state.scanning = true;
@@ -2296,7 +2296,7 @@
           updateStats(data);
         } catch (err) {
           console.warn('Backend unavailable, using demo data:', err.message);
-          // Demo mode â€” show mock results
+          // Demo mode Ã¢â‚¬â€ show mock results
           const mockData = getMockResult();
           setTimeout(() => {
             renderResult(mockData);
@@ -2318,7 +2318,7 @@
         analyseImage(frame);
       });
 
-      // â”€â”€â”€ File Upload â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ File Upload Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       dom.btnUpload.addEventListener('click', () => dom.fileInput.click());
 
       dom.fileInput.addEventListener('change', (e) => {
@@ -2330,7 +2330,7 @@
         dom.fileInput.value = '';
       });
 
-      // â”€â”€â”€ GPS â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ GPS Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       async function getGPS() {
         return new Promise((resolve) => {
           if (!navigator.geolocation) return resolve(null);
@@ -2342,25 +2342,25 @@
         });
       }
 
-      // â”€â”€â”€ Mock Data â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Mock Data Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       function getMockResult() {
         if (state.mode === 'doctor') {
           return {
             species: { common_name: "Swiss Cheese Plant", scientific_name: "Monstera deliciosa", family: "Araceae", confidence: 0.94 },
-            health: { status: "warning", diagnosis: "Early signs of overwatering detected. Lower leaves show yellowing with soft dark spots. Soil appears excessively moist, risking root rot if untreated.", treatment: ["Allow top 5cm of soil to dry completely before next watering", "Improve drainage by mixing perlite or orchid bark into the soil", "Remove severely affected leaves to redirect the plant's energy", "Ensure the pot has unblocked drainage holes â€” consider elevating it"], watering_schedule: "Every 10-14 days" }
+            health: { status: "warning", diagnosis: "Early signs of overwatering detected. Lower leaves show yellowing with soft dark spots. Soil appears excessively moist, risking root rot if untreated.", treatment: ["Allow top 5cm of soil to dry completely before next watering", "Improve drainage by mixing perlite or orchid bark into the soil", "Remove severely affected leaves to redirect the plant's energy", "Ensure the pot has unblocked drainage holes Ã¢â‚¬â€ consider elevating it"], watering_schedule: "Every 10-14 days" }
           };
         } else {
           return {
             species: { common_name: "Swiss Cheese Plant", scientific_name: "Monstera deliciosa", family: "Araceae", confidence: 0.94 },
             natural_history: "Native to the tropical rainforests of southern Mexico to Panama. In the wild, Monstera deliciosa climbs tree trunks using aerial roots, reaching heights up to 20 metres. The iconic leaf fenestrations are believed to allow light through to lower leaves and help the plant withstand heavy rain and wind in its canopy habitat.",
             conservation_status: "LC",
-            field_notes: "Found in humid understory environments. The mature fruit is edible, described as tasting like a blend of banana, pineapple, and mango â€” but contains calcium oxalate crystals when unripe. Widely cultivated as a houseplant since the Victorian era.",
+            field_notes: "Found in humid understory environments. The mature fruit is edible, described as tasting like a blend of banana, pineapple, and mango Ã¢â‚¬â€ but contains calcium oxalate crystals when unripe. Widely cultivated as a houseplant since the Victorian era.",
             inat_observations: 12847
           };
         }
       }
 
-      // â”€â”€â”€ Render Results â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Render Results Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       function renderResult(data) {
         const sp = data.species;
         const confidencePct = Math.round((sp.confidence || 0) * 100);
@@ -2499,7 +2499,7 @@
             `;
       }
 
-      // â”€â”€â”€ Journal â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Journal Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       function loadJournal() {
         try {
           const raw = localStorage.getItem('sativus_journal');
@@ -2586,7 +2586,7 @@
         toast('Entry removed from journal');
       }
 
-      // â”€â”€â”€ Stats â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Stats Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       function loadStats() {
         try {
           const raw = localStorage.getItem('sativus_stats');
@@ -2626,7 +2626,7 @@
         dom.statSpecies.textContent = state.stats.species;
       }
 
-      // â”€â”€â”€ Reminders â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Reminders Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       function loadReminders() {
         try {
           const raw = localStorage.getItem('sativus_reminders');
@@ -2680,7 +2680,7 @@
             `).join('');
       }
 
-      // â”€â”€â”€ Voice â”€â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Voice Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
       function toggleVoice() {
         if (state.voiceActive) {
           closeVoice();
@@ -2844,21 +2844,18 @@
 
       dom.voiceClose.addEventListener('click', stopVoice);
 
-      // ─── Initialization ───
+      // â”€â”€â”€ Initialization â”€â”€â”€
       function init() {
         setMode('doctor');
-        // Load journal from localstorage if exists
-        const saved = localStorage.getItem('sativus_journal');
-        if (saved) {
-          state.journal = JSON.parse(saved);
-          renderJournal();
-        }
+        loadJournal();
+        loadStats();
+        loadReminders();
         updateStats();
       }
 
       init();
 
-      // Export for inline handlers
+      // Global instance for inline handlers
       window.sativusApp = {
         setReminder: (name, schedule) => {
           toast(`Reminder set for ${name}: ${schedule}`);
