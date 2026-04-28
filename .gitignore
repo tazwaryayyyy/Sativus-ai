@@ -18,3 +18,7 @@ __pycache__/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Project transient files
+server_pid.txt
+backend/reminders.json

@@ -1,127 +1,82 @@
-# Sativus AI
+# Sativus AI 🌿
 
-Sativus AI is a plant doctor and nature explorer built on a FastAPI backend with Groq-powered image analysis.
+**Sativus AI** is a state-of-the-art multimodal plant doctor and nature explorer. Powered by Groq's high-speed vision models, it provides instant identification and health assessment of plants, animals, and fungi through a sleek, bento-style interface.
 
-Point your camera at a plant or living organism to get multimodal analysis and care guidance.
+Now featuring **Real-time Voice Interaction** for a hands-free, conversational experience.
 
-## Why this project
+---
 
-- Plant care apps are often static and generic.
-- Sativus makes diagnosis interactive, contextual, and conversational.
-- The same interface supports both home gardening and outdoor exploration.
+## ✨ Key Features
 
-## Core features
+- **🏥 Plant Doctor Mode**: Deep analysis of plant health, providing instant diagnoses and step-by-step treatment plans.
+- **🔭 Nature Explorer Mode**: Learn about the wild—identify birds, insects, and fungi with a focus on conservation and natural history.
+- **🎙️ Live Voice (New)**: Low-latency voice interaction powered by **Deepgram** (STT), **Groq** (LLM), and **ElevenLabs** (TTS).
+- **💧 Smart Reminders**: Deterministic parsing of watering schedules with persistent local storage.
+- **📔 Field Journal**: A historical log of your discoveries, cached locally for fast retrieval.
+- **📱 PWA Ready**: Install Sativus as a standalone app on your mobile device for outdoor use.
 
-- Plant Doctor mode: identify plant, assess health, and propose treatment steps.
-- Nature Explorer mode: identify plants/animals/insects/fungi and provide facts.
-- Live voice implementation removed; feature-flag scaffolding is kept for future provider integration.
-- Reminder workflow: deterministic watering interval parsing with due-date storage.
-- Journal memory: local history of scans for continuity in follow-up conversations.
+## 🛠️ Technology Stack
 
-## Tech stack
+- **Backend**: Python / FastAPI / WebSockets
+- **Intelligence**: Groq Llama 3.3 70B (Vision & Text)
+- **Voice**: Deepgram (Streaming STT) & ElevenLabs (Streaming TTS)
+- **Frontend**: Vanilla JavaScript / HTML5 / CSS3 (No heavy frameworks, maximum speed)
+- **Ecosystem**: iNaturalist API (Global Observations), Open-Meteo (Contextual weather)
 
-- Backend: FastAPI + WebSocket
-- AI: Groq Vision API
-- Frontend: Vanilla HTML/CSS/JS
-- External APIs: Open-Meteo, iNaturalist
+---
 
-## Repository layout
+## 🚀 Quick Start
 
-```text
-backend/main.py               # FastAPI app, analyze/reminders routes
-frontend/index.html           # Full UI and client logic
-frontend/manifest.json        # PWA manifest
-frontend/sw.js                # Service worker
-scripts/smoke_test.py         # REST smoke tests
-scripts/live_stress_test.py   # Live scaffold check script
-```
+### 1. Prerequisites
+Ensure you have Python 3.10+ installed.
 
-## Local setup
-
-1. Install dependencies:
-
+### 2. Installation
 ```bash
+# Clone the repository
+git clone https://github.com/tazwaryayyyy/Sativus-ai.git
+cd Sativus-ai
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-2. Create backend env file from template and add key:
-
-```env
-GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL=llama-3.2-11b-vision-preview
-LIVE_VOICE_ENABLED=false
-LIVE_VOICE_PROVIDER=none
-```
-
-3. Start server from repository root:
-
+### 3. Configuration
+Copy the template and add your API keys:
 ```bash
-uvicorn backend.main:app --host 0.0.0.0 --port 8080
+cp .env.example backend/.env
 ```
+Edit `backend/.env` with your credentials for Groq, Deepgram, and ElevenLabs.
 
-4. Open app:
+### 4. Running Locally
+```bash
+# Start the FastAPI server
+uvicorn backend.main:app --host 0.0.0.0 --port 8080 --reload
+```
+Open [http://localhost:8080](http://localhost:8080) in your browser.
+
+---
+
+## 🏗️ Architecture
 
 ```text
-http://localhost:8080
+├── backend/
+│   ├── main.py          # FastAPI application & Voice Orchestrator
+│   └── reminders.json   # Local database for plant care
+├── frontend/
+│   ├── index.html       # Monolithic UI & Client-side logic
+│   ├── manifest.json    # PWA configuration
+│   └── sw.js            # Service worker for offline caching
+└── scripts/             # Utility and testing scripts
 ```
 
-## Verification and stress testing
+## 🔒 Security & Performance
 
-Basic smoke test:
+- **Production Middleware**: Includes restricted CORS, request size limits (10MB), and robust security headers (HSTS, CSP-ready).
+- **Efficiency**: Optimized image resizing to prevent OOM errors in memory-constrained environments (e.g., free tier deployments).
+- **Observability**: Built-in `/metrics` endpoint tracking API latency and session success rates.
 
-```bash
-python scripts/smoke_test.py
-```
+## 📜 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Live scaffold checks (optional):
-
-```bash
-# Windows PowerShell
-$env:SATIVUS_ENABLE_LIVE_CHECKS=true
-python scripts/run_pre_demo_checks.ps1
-```
-
-Health endpoint:
-
-```text
-GET /health
-```
-
-Metrics endpoint:
-
-```text
-GET /metrics
-```
-
-Includes:
-- analyze requests, success/fail, average latency
-- live sessions started/completed/failed
-
-## Runtime behavior notes
-
-- Analyze route is Groq-only in this version.
-- Live voice route is scaffolded via `LIVE_VOICE_ENABLED` and `LIVE_VOICE_PROVIDER`.
-  No provider implementation is included yet.
-- API quota or malformed model outputs are handled and surfaced as safe responses.
-
-## Production readiness
-
-- Security headers middleware is enabled:
-  `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, and `Strict-Transport-Security` (when `PROD` is set).
-- Docker image includes a `/health` healthcheck.
-- Analyze API now returns stricter status codes and sanitized error messages.
-
-## Troubleshooting
-
-- Port already in use on 8080:
-  stop the existing process using that port, then restart uvicorn.
-- No module named pylint:
-  install it manually in the venv if you need lint checks.
-- Live websocket errors under load:
-  expected until a live provider implementation is added and enabled via feature flags.
-- Frontend cannot connect:
-  make sure you open http://localhost:8080 (not the html file directly).
-
-## License
-
-MIT License. See LICENSE.
+---
+*Made with ❤️ by Tazwar Ahnaf Enan*

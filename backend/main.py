@@ -19,7 +19,6 @@ import asyncio
 import websockets
 from deepgram import (
     DeepgramClient,
-    DeepgramClientOptions,
     LiveTranscriptionEvents,
     LiveOptions,
 )
