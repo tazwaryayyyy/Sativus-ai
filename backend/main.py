@@ -23,7 +23,6 @@ from deepgram import (
     LiveOptions,
 )
 import deepgram
-logger.info(f"Using Deepgram SDK version: {getattr(deepgram, '__version__', 'unknown')}")
 
 load_dotenv()
 
@@ -37,6 +36,7 @@ ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")
 
 logger = logging.getLogger("sativus")
+logger.info(f"Using Deepgram SDK version: {getattr(deepgram, '__version__', 'unknown')}")
 
 app = FastAPI()
 
