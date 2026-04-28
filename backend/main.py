@@ -17,7 +17,13 @@ from dotenv import load_dotenv
 import httpx
 import asyncio
 import websockets
-from deepgram import DeepgramClient, LiveTranscriptionEvents, LiveOptions
+from deepgram import (
+    DeepgramClient,
+    LiveTranscriptionEvents,
+    LiveOptions,
+)
+import deepgram
+logger.info(f"Using Deepgram SDK version: {getattr(deepgram, '__version__', 'unknown')}")
 
 load_dotenv()
 
