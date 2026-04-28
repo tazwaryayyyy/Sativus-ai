@@ -14,6 +14,15 @@ import threading
 import re
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
+import httpx
+import asyncio
+import websockets
+from deepgram import (
+    DeepgramClient,
+    DeepgramClientOptions,
+    LiveTranscriptionEvents,
+    LiveOptions,
+)
 
 load_dotenv()
 
@@ -22,6 +31,9 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.2-11b-vision-preview")
 LIVE_VOICE_ENABLED = os.getenv("LIVE_VOICE_ENABLED", "false").lower() == "true"
 LIVE_VOICE_PROVIDER = os.getenv("LIVE_VOICE_PROVIDER", "none").strip().lower()
+DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY")
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")
 
 logger = logging.getLogger("sativus")
 
@@ -635,37 +647,185 @@ async def get_due_reminders(req: DueReminderRequest):
 
 
 # ══════════════════════════════════════════
-# LIVE VOICE SCAFFOLD (FEATURE-FLAGGED)
+# LIVE VOICE IMPLEMENTATION
 # ══════════════════════════════════════════
+
+async def get_groq_response_stream(transcript: str, mode: str):
+    """Streams text response from Groq based on user transcript."""
+    system_prompt = (
+        "You are Sativus, a helpful plant doctor and nature explorer. "
+        "Keep your responses concise, friendly, and suitable for voice conversation. "
+        "Do not use markdown formatting like bold or bullet points, as this will be read aloud."
+    )
+    if mode == "explorer":
+        system_prompt += " You are in Explorer mode, focusing on wildlife and nature."
+    else:
+        system_prompt += " You are in Doctor mode, focusing on plant health and care."
+
+    async with httpx.AsyncClient() as client:
+        try:
+            async with client.stream(
+                "POST",
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {GROQ_API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": "llama-3.3-70b-specdec",  # Fast & smart
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": transcript}
+                    ],
+                    "stream": True,
+                    "temperature": 0.7,
+                    "max_tokens": 150,
+                },
+                timeout=10.0
+            ) as response:
+                if response.status_code != 200:
+                    yield f"Error: Groq returned {response.status_code}"
+                    return
+
+                async for line in response.aiter_lines():
+                    if line.startswith("data: "):
+                        data_str = line[6:].strip()
+                        if data_str == "[DONE]":
+                            break
+                        try:
+                            data = json.loads(data_str)
+                            content = data["choices"][0]["delta"].get("content", "")
+                            if content:
+                                yield content
+                        except (json.JSONDecodeError, KeyError):
+                            continue
+        except Exception as e:
+            logger.error(f"Groq stream error: {e}")
+            yield "I'm having trouble thinking right now."
+
 @app.websocket("/ws/live")
 async def live_voice(websocket: WebSocket):
     await websocket.accept()
     _record_metric("live_sessions_started")
+    
+    if not LIVE_VOICE_ENABLED or not DEEPGRAM_API_KEY or not ELEVENLABS_API_KEY:
+        await websocket.send_json({"type": "error", "message": "Live voice services not fully configured."})
+        await websocket.close()
+        return
+
+    # 1. Setup Deepgram
+    dg_client = DeepgramClient(DEEPGRAM_API_KEY)
+    dg_connection = dg_client.listen.live.v("1")
+    
+    # 2. Setup ElevenLabs WebSocket for streaming input
+    # We'll open this when we start getting text from Groq
+    el_ws_url = f"wss://api.elevenlabs.io/v1/text-to-speech/{ELEVENLABS_VOICE_ID}/stream-input?model_id=eleven_turbo_v2_5"
+    
+    user_mode = "doctor"
+    is_processing = False
+
+    async def on_message(self, result, **kwargs):
+        nonlocal is_processing
+        sentence = result.channel.alternatives[0].transcript
+        if not sentence or not result.is_final:
+            return
+        
+        if is_processing:
+            return # Simple debounce
+            
+        is_processing = True
+        logger.info(f"[LIVE] Transcript: {sentence}")
+        await websocket.send_json({"type": "transcript", "text": sentence})
+        await websocket.send_json({"type": "state", "state": "thinking"})
+
+        # Start ElevenLabs streaming
+        async with httpx.AsyncClient() as client:
+            try:
+                async with websockets.connect(el_ws_url) as el_ws:
+                    # Initial ElevenLabs config
+                    await el_ws.send(json.dumps({
+                        "text": " ", # Start with space
+                        "voice_settings": {"stability": 0.5, "similarity_boost": 0.8},
+                        "xi_api_key": ELEVENLABS_API_KEY,
+                    }))
+
+                    await websocket.send_json({"type": "state", "state": "speaking"})
+                    
+                    # Stream from Groq to ElevenLabs
+                    full_response = ""
+                    async for chunk in get_groq_response_stream(sentence, user_mode):
+                        full_response += chunk
+                        await el_ws.send(json.dumps({"text": chunk, "try_trigger_generation": True}))
+                        
+                        # Check for audio from ElevenLabs while sending text
+                        # This part is tricky with simple loops, usually done with a listener task
+                        # But for now we'll do sequential chunks for stability
+                        try:
+                            # Try to receive audio chunks from ElevenLabs
+                            # We set a tiny timeout to keep the Groq stream moving
+                            while True:
+                                el_resp_raw = await asyncio.wait_for(el_ws.recv(), timeout=0.01)
+                                el_resp = json.loads(el_resp_raw)
+                                if el_resp.get("audio"):
+                                    await websocket.send_bytes(base64.b64decode(el_resp["audio"]))
+                                if el_resp.get("isFinal"):
+                                    break
+                        except asyncio.TimeoutError:
+                            pass
+
+                    # Finish ElevenLabs stream
+                    await el_ws.send(json.dumps({"text": ""}))
+                    
+                    # Flush remaining audio
+                    try:
+                        while True:
+                            el_resp_raw = await asyncio.wait_for(el_ws.recv(), timeout=1.0)
+                            el_resp = json.loads(el_resp_raw)
+                            if el_resp.get("audio"):
+                                await websocket.send_bytes(base64.b64decode(el_resp["audio"]))
+                            if el_resp.get("isFinal"):
+                                break
+                    except asyncio.TimeoutError:
+                        pass
+                    
+                    await websocket.send_json({"type": "state", "state": "idle"})
+                    logger.info(f"[LIVE] Full Response: {full_response}")
+
+            except Exception as e:
+                logger.error(f"Voice orchestration error: {e}")
+                await websocket.send_json({"type": "error", "message": "Voice synthesis failed."})
+            finally:
+                is_processing = False
+
+    dg_connection.on(LiveTranscriptionEvents.Transcript, on_message)
+    
+    options = LiveOptions(
+        model="nova-2",
+        language="en-US",
+        smart_format=True,
+        encoding="linear16",
+        channels=1,
+        sample_rate=16000,
+    )
+
+    if not dg_connection.start(options):
+        await websocket.send_json({"type": "error", "message": "Failed to connect to STT provider."})
+        return
+
     try:
-        if not LIVE_VOICE_ENABLED:
-            _record_metric("live_sessions_failed")
-            await websocket.send_json({
-                "type": "error",
-                "message": "Live voice is disabled. Set LIVE_VOICE_ENABLED=true to enable scaffolding."
-            })
-            return
-
-        if LIVE_VOICE_PROVIDER == "none":
-            _record_metric("live_sessions_failed")
-            await websocket.send_json({
-                "type": "error",
-                "message": "Live voice provider is not configured. Set LIVE_VOICE_PROVIDER to your implementation target."
-            })
-            return
-
-        _record_metric("live_sessions_failed")
-        await websocket.send_json({
-            "type": "error",
-            "message": f"Live voice provider '{LIVE_VOICE_PROVIDER}' is not implemented yet in this build."
-        })
+        while True:
+            data = await websocket.receive()
+            if "bytes" in data:
+                dg_connection.send(data["bytes"])
+            elif "text" in data:
+                msg = json.loads(data["text"])
+                if msg.get("type") == "mode":
+                    user_mode = msg.get("mode", "doctor")
+            elif data.get("type") == "websocket.disconnect":
+                break
+    except Exception as e:
+        logger.error(f"WebSocket loop error: {e}")
     finally:
-        try:
-            await websocket.close(code=1000)
-        except (RuntimeError, ValueError, TypeError, OSError):
-            pass
+        dg_connection.finish()
+        _record_metric("live_sessions_completed")
         logger.info("[LIVE] Session closed")

@@ -8,6 +8,7 @@
   <title>Sativus AI</title>
   <meta name="theme-color" content="#120f09">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="manifest.json">
   <link
@@ -1789,32 +1790,143 @@
     }
 
     // ══════════════════════════════════════════
-    // LIVE VOICE SCAFFOLD (NO IMPLEMENTATION)
+    // LIVE VOICE IMPLEMENTATION
     // ══════════════════════════════════════════
 
-    function handleAsk() {
+    let liveSocket = null, audioQueue = [], isPlaying = false;
+    let processor = null, micStream = null, audioContext = null;
+
+    async function handleAsk() {
       if (!LIVE_ENABLED) {
-        setStatus('Live voice is disabled in this build.');
+        setStatus('Live voice is disabled.');
         return;
       }
-      setStatus(`Live voice provider '${LIVE_PROVIDER}' is not implemented yet.`);
+
+      if (aiState === AI_STATES.LISTENING || aiState === AI_STATES.THINKING || aiState === AI_STATES.SPEAKING) {
+        stopLiveSession();
+        return;
+      }
+
+      fadeOutSpeech();
+      setStatus('Starting session…');
+      
+      try {
+        const wsUrl = API_URL.replace('http', 'ws') + '/ws/live';
+        liveSocket = new WebSocket(wsUrl);
+        liveSocket.binaryType = 'arraybuffer';
+
+        liveSocket.onopen = async () => {
+          setStatus('Listening…');
+          setAIState(AI_STATES.LISTENING);
+          liveSocket.send(JSON.stringify({ type: 'mode', mode: currentMode }));
+          await startMicStreaming();
+        };
+
+        liveSocket.onmessage = async (e) => {
+          if (typeof e.data === 'string') {
+            const msg = JSON.parse(e.data);
+            if (msg.type === 'transcript') {
+              setStatus('Thinking…');
+            } else if (msg.type === 'state') {
+              setAIState(msg.state);
+            } else if (msg.type === 'error') {
+              setStatus(msg.message);
+              stopLiveSession();
+            }
+          } else {
+            handleIncomingAudio(e.data);
+          }
+        };
+
+        liveSocket.onclose = () => {
+          stopLiveSession();
+        };
+
+        liveSocket.onerror = (err) => {
+          console.error('WebSocket Error:', err);
+          setStatus('Connection error');
+          stopLiveSession();
+        };
+
+      } catch (err) {
+        console.error('Init Error:', err);
+        setStatus('Voice failed');
+      }
     }
 
-    function startLiveSession() {
-      setStatus(`Live voice provider '${LIVE_PROVIDER}' is not implemented yet.`);
+    async function startMicStreaming() {
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+        const source = audioContext.createMediaStreamSource(micStream);
+        processor = audioContext.createScriptProcessor(4096, 1, 1);
+
+        source.connect(processor);
+        processor.connect(audioContext.destination);
+
+        processor.onaudioprocess = (e) => {
+          if (aiState !== AI_STATES.LISTENING) return;
+          const inputData = e.inputBuffer.getChannelData(0);
+          const pcmData = new Int16Array(inputData.length);
+          for (let i = 0; i < inputData.length; i++) {
+            pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7FFF;
+          }
+          if (liveSocket && liveSocket.readyState === WebSocket.OPEN) {
+            liveSocket.send(pcmData.buffer);
+          }
+        };
+      } catch (err) {
+        console.error('Mic Error:', err);
+        setStatus('Microphone blocked');
+        stopLiveSession();
+      }
+    }
+
+    function handleIncomingAudio(arrayBuffer) {
+      audioQueue.push(arrayBuffer);
+      if (!isPlaying) playNextInQueue();
+    }
+
+    async function playNextInQueue() {
+      if (audioQueue.length === 0) {
+        isPlaying = false;
+        return;
+      }
+
+      isPlaying = true;
+      const chunk = audioQueue.shift();
+      const blob = new Blob([chunk], { type: 'audio/mpeg' });
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+        playNextInQueue();
+      };
+
+      audio.onerror = () => {
+        URL.revokeObjectURL(url);
+        playNextInQueue();
+      };
+
+      try {
+        await audio.play();
+      } catch (e) {
+        console.error('Play Blocked:', e);
+        playNextInQueue();
+      }
     }
 
     function stopLiveSession() {
+      if (processor) { processor.disconnect(); processor = null; }
+      if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+      if (audioContext) { audioContext.close(); audioContext = null; }
+      if (liveSocket) { if (liveSocket.readyState === WebSocket.OPEN) liveSocket.close(); liveSocket = null; }
+      audioQueue = [];
+      isPlaying = false;
       setAIState(AI_STATES.IDLE);
+      setStatus('Ready ✦');
     }
-
-    function cancelListening() {
-      setStatus('Live voice is not active.');
-    }
-
-    // Keep stopListening as alias so nothing else breaks
-    function stopListening() { stopLiveSession(); }
-    function startListening() { startLiveSession(); }
 
 
     async function saveToJournal(data) {

@@ -5,3 +5,6 @@ python-dotenv
 pydantic
 websockets
 python-multipart
+deepgram-sdk
+httpx
+elevenlabs
