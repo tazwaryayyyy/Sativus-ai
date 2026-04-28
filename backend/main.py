@@ -17,8 +17,7 @@ from dotenv import load_dotenv
 import httpx
 import asyncio
 import websockets
-from deepgram import DeepgramClient
-from deepgram.clients.live.v1 import LiveTranscriptionEvents, LiveOptions
+from deepgram import DeepgramClient, LiveTranscriptionEvents, LiveOptions
 
 load_dotenv()
 
